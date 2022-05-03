@@ -204,6 +204,12 @@ paths:
       operationId: 登録
       summary: ''
       parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResultRequestBody'
       responses:
         '201':
           description: ''
@@ -641,6 +647,182 @@ components:
       required:
         - error
         - error_description
+    BossKey:
+      type: object
+      properties:
+        key:
+          type: string
+          enum:
+            - sakelien-golden
+            - sakelien-bomber
+            - sakelien-cup-twins
+            - sakelien-shield
+            - sakelien-snake
+            - sakelien-tower
+            - sakediver
+            - sakedozer
+            - sakerocket
+        name:
+          type: string
+      required:
+        - key
+    BossCount:
+      type: object
+      properties:
+        boss:
+          $ref: '#/components/schemas/BossKey'
+        count:
+          type: integer
+      required:
+        - boss
+        - count
+    BossCounts:
+      type: object
+      properties:
+        '3':
+          $ref: '#/components/schemas/BossCount'
+        '6':
+          $ref: '#/components/schemas/BossCount'
+        '9':
+          $ref: '#/components/schemas/BossCount'
+        '12':
+          $ref: '#/components/schemas/BossCount'
+        '13':
+          $ref: '#/components/schemas/BossCount'
+        '14':
+          $ref: '#/components/schemas/BossCount'
+        '15':
+          $ref: '#/components/schemas/BossCount'
+        '16':
+          $ref: '#/components/schemas/BossCount'
+        '21':
+          $ref: '#/components/schemas/BossCount'
+      required:
+        - '3'
+        - '6'
+        - '9'
+        - '12'
+        - '13'
+        - '14'
+        - '15'
+        - '16'
+        - '21'
+    GradeRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        long_name:
+          type: string
+        name:
+          type: string
+        short_name:
+          type: string
+      required:
+        - id
+    EventTypeRequest:
+      type: object
+      properties:
+        key:
+          type: string
+          enum:
+            - WATERLEVELS
+            - RUSH
+            - GEYSER
+            - GRILLER
+            - RALLY
+            - FOG
+            - MISSILE
+        name:
+          type: string
+      required:
+        - key
+    WaterLevelRequest:
+      type: object
+      properties:
+        key:
+          type: string
+          enum:
+            - LOW
+            - MIDDLE
+            - HIGH
+        name:
+          type: string
+      required:
+        - key
+    WaveRequest:
+      type: object
+      properties:
+        event_type:
+          $ref: '#/components/schemas/EventTypeRequest'
+        golden_ikura_num:
+          type: integer
+        golden_ikura_pop_num:
+          type: integer
+        ikura_num:
+          type: integer
+        quota_num:
+          type: integer
+        water_level:
+          $ref: '#/components/schemas/WaterLevelRequest'
+      required:
+        - event_type
+        - golden_ikura_num
+        - golden_ikura_pop_num
+        - ikura_num
+        - quota_num
+        - water_level
+    ResultRequest:
+      type: object
+      properties:
+        boss_counts:
+          $ref: '#/components/schemas/BossCounts'
+        grade:
+          $ref: '#/components/schemas/GradeRequest'
+        danger_rate:
+          type: double
+        end_time:
+          type: integer
+        grade_point:
+          type: integer
+        grade_point_delta:
+          type: integer
+        job_id:
+          type: integer
+        job_rate:
+          type: integer
+        job_score:
+          type: integer
+        kuma_point:
+          type: integer
+        play_time:
+          type: integer
+        start_time:
+          type: integer
+        wave_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/WaveRequest'
+      required:
+        - boss_counts
+        - grade
+        - danger_rate
+        - end_time
+        - play_time
+        - start_time
+        - wave_details
+    ResultRequestBody:
+      type: object
+      properties:
+        results:
+          title: SplatNet2
+          minItems: 0
+          maxItems: 50
+          type: array
+          items:
+            $ref: '#/components/schemas/ResultRequest'
+      required:
+        - results
     Waves:
       type: object
       properties:

@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -11,6 +12,7 @@ import {
   Req,
 } from '@nestjs/common';
 import {
+  ApiBody,
   ApiExtension,
   ApiExtraModels,
   ApiNotFoundResponse,
@@ -20,6 +22,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { PaginatedRequestDtoForResult } from 'src/dto/pagination.dto';
+import { ResultRequestBody } from 'src/dto/request/results.request';
 import {
   ApiPaginatedResponse,
   ErrorResponse,
@@ -64,7 +67,7 @@ export class ResultsController {
   @Post('')
   @ApiTags('リザルト')
   @ApiOperation({ operationId: '登録' })
-  create() {}
+  create(@Body() request: ResultRequestBody) {}
 
   @Put(':salmon_id')
   @ApiParam({ name: 'salmon_id', type: 'integer', description: 'リザルトID' })
