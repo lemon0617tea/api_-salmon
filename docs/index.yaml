@@ -1,24 +1,5 @@
 openapi: 3.0.0
 paths:
-  /api/s2s:
-    get:
-      operationId: S2SController_throw
-      parameters: []
-      responses:
-        '200':
-          description: ''
-    post:
-      operationId: S2SController_create
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/S2SRequestDTO'
-      responses:
-        '201':
-          description: ''
   /users/{nsaid}:
     get:
       operationId: 取得
@@ -173,11 +154,91 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
       tags:
         - リザルト
+  /results:
+    get:
+      operationId: 一括取得
+      summary: ''
+      parameters:
+        - name: offset
+          required: true
+          in: query
+          schema:
+            minimum: 0
+            title: ''
+            default: 0
+            type: number
+        - name: limit
+          required: true
+          in: query
+          schema:
+            minimum: 0
+            maximum: 200
+            title: limit
+            default: 25
+            type: number
+        - name: is_only_clear
+          required: true
+          in: query
+          description: クリアしたリザルトのみ
+          schema:
+            title: ''
+            default: false
+            type: boolean
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                title: PaginatedResponseOfResponse
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedDto'
+                  - properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Response'
+      tags:
+        - リザルト
+    post:
+      operationId: 登録
+      summary: ''
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - リザルト
   /results/schedules/{schedule_id}:
     get:
       operationId: スケジュール指定
       summary: ''
       parameters:
+        - name: offset
+          required: true
+          in: query
+          schema:
+            minimum: 0
+            title: ''
+            default: 0
+            type: number
+        - name: limit
+          required: true
+          in: query
+          schema:
+            minimum: 0
+            maximum: 200
+            title: limit
+            default: 25
+            type: number
+        - name: is_only_clear
+          required: true
+          in: query
+          description: クリアしたリザルトのみ
+          schema:
+            title: ''
+            default: false
+            type: boolean
         - name: schedule_id
           required: true
           in: path
@@ -205,6 +266,31 @@ paths:
       operationId: プレイヤー指定
       summary: ''
       parameters:
+        - name: offset
+          required: true
+          in: query
+          schema:
+            minimum: 0
+            title: ''
+            default: 0
+            type: number
+        - name: limit
+          required: true
+          in: query
+          schema:
+            minimum: 0
+            maximum: 200
+            title: limit
+            default: 25
+            type: number
+        - name: is_only_clear
+          required: true
+          in: query
+          description: クリアしたリザルトのみ
+          schema:
+            title: ''
+            default: false
+            type: boolean
         - name: nsaid
           required: true
           in: path
@@ -227,16 +313,6 @@ paths:
                           $ref: '#/components/schemas/Response'
       tags:
         - リザルト一覧
-  /results:
-    post:
-      operationId: 登録
-      summary: ''
-      parameters: []
-      responses:
-        '201':
-          description: ''
-      tags:
-        - リザルト
   /ranking/schedules/{schedule_id}:
     get:
       operationId: 取得
@@ -286,18 +362,18 @@ tags: []
 servers: []
 components:
   schemas:
-    S2SRequestDTO:
-      type: object
-      properties: {}
     PaginatedDto:
       type: object
       properties:
         total:
-          type: number
+          type: integer
+          description: 総数
         limit:
-          type: number
+          type: integer
+          description: 取得数
         offset:
-          type: number
+          type: integer
+          description: オフセット
       required:
         - total
         - limit
@@ -422,9 +498,12 @@ components:
         - failure_reason
         - failure_wave
         - is_clear
-    Players:
+    Player:
       type: object
       properties:
+        nsaid:
+          type: string
+          description: プレイヤーID
         job_id:
           type: integer
           nullable: true
@@ -449,13 +528,57 @@ components:
           type: integer
           nullable: true
           description: クマサンポイント
+        golden_ikura_num:
+          type: integer
+          description: 金イクラ納品数
+        ikura_num:
+          type: integer
+          description: 赤イクラ獲得数
+        help_counts:
+          type: integer
+          description: 救助数
+        dead_counts:
+          type: integer
+          description: 被救助数
+        boss_kill_counts:
+          description: オオモノ討伐数
+          type: array
+          items:
+            type: number
+        weapon_lists:
+          description: 支給ブキ
+          type: array
+          items:
+            type: string
+        special_id:
+          type: string
+          enum:
+            - SPLATBOMBLAUNCHER
+            - STINGRAY
+            - INKJET
+            - SPLASHDOWN
+          description: スペシャルID
+        special_counts:
+          description: スペシャル使用回数
+          type: array
+          items:
+            type: number
       required:
+        - nsaid
         - job_id
         - grade_point
         - grade_point_delta
         - job_rate
         - job_score
         - kuma_point
+        - golden_ikura_num
+        - ikura_num
+        - help_counts
+        - dead_counts
+        - boss_kill_counts
+        - weapon_lists
+        - special_id
+        - special_counts
     Response:
       type: object
       properties:
@@ -492,15 +615,11 @@ components:
           description: リザルト
           allOf:
             - $ref: '#/components/schemas/JobResult'
-        my_result:
-          description: 個人リザルト
-          allOf:
-            - $ref: '#/components/schemas/Players'
-        other_results:
-          description: 仲間リザルト
+        player_results:
+          description: プレイヤー記録
           type: array
           items:
-            $ref: '#/components/schemas/Players'
+            $ref: '#/components/schemas/Player'
       required:
         - salmon_id
         - boss_counts
@@ -511,8 +630,7 @@ components:
         - play_time
         - schedule
         - job_results
-        - my_result
-        - other_results
+        - player_results
     ErrorResponse:
       type: object
       properties:
@@ -596,21 +714,23 @@ components:
           type: array
           items:
             type: number
-        help_count_total:
+        help_counts:
           type: integer
           description: 救助数合計
-        dead_count_total:
+        dead_counts:
           type: integer
           description: 被救助数合計
       required:
         - job_result
         - boss_counts
         - boss_kill_counts
-        - help_count_total
-        - dead_count_total
+        - help_counts
+        - dead_counts
     Stats:
       type: object
       properties:
+        schedule:
+          $ref: '#/components/schemas/Metadata'
         my_result:
           description: 統計
           allOf:
@@ -620,5 +740,6 @@ components:
           allOf:
             - $ref: '#/components/schemas/Result'
       required:
+        - schedule
         - my_result
         - other_results

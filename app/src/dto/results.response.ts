@@ -1,5 +1,10 @@
 import { ApiProperty, ApiResponse } from '@nestjs/swagger';
-import { FailureReason, StageType, WeaponType } from '@prisma/client';
+import {
+  FailureReason,
+  SpecialType,
+  StageType,
+  WeaponType,
+} from '@prisma/client';
 
 export namespace Results {
   class Schedule {
@@ -26,7 +31,9 @@ export namespace Results {
     is_clear: Boolean;
   }
 
-  class Players {
+  class Player {
+    @ApiProperty({ description: 'プレイヤーID' })
+    nsaid: string;
     @ApiProperty({ type: 'integer', nullable: true, description: 'バイトID' })
     job_id: number;
     @ApiProperty({ type: 'integer', nullable: true, description: '評価レート' })
@@ -55,6 +62,22 @@ export namespace Results {
       description: 'クマサンポイント',
     })
     kuma_point: number;
+    @ApiProperty({ type: 'integer', description: '金イクラ納品数' })
+    golden_ikura_num: number;
+    @ApiProperty({ type: 'integer', description: '赤イクラ獲得数' })
+    ikura_num: number;
+    @ApiProperty({ type: 'integer', description: '救助数' })
+    help_counts: number;
+    @ApiProperty({ type: 'integer', description: '被救助数' })
+    dead_counts: number;
+    @ApiProperty({ type: [Number], description: 'オオモノ討伐数' })
+    boss_kill_counts: number[];
+    @ApiProperty({ description: '支給ブキ' })
+    weapon_lists: WeaponType[];
+    @ApiProperty({ enum: SpecialType, description: 'スペシャルID' })
+    special_id: SpecialType;
+    @ApiProperty({ type: [Number], description: 'スペシャル使用回数' })
+    special_counts: number[];
   }
 
   export class Response {
@@ -76,9 +99,7 @@ export namespace Results {
     schedule: Schedule;
     @ApiProperty({ description: 'リザルト' })
     job_results: JobResult;
-    @ApiProperty({ type: Players, description: '個人リザルト' })
-    my_result: Players;
-    @ApiProperty({ type: [Players], description: '仲間リザルト' })
-    other_results: Players[];
+    @ApiProperty({ type: [Player], description: 'プレイヤー記録' })
+    player_results: Player[];
   }
 }

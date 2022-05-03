@@ -7,6 +7,8 @@ import {
   HttpStatus,
   Post,
   Put,
+  Query,
+  Req,
 } from '@nestjs/common';
 import {
   ApiExtension,
@@ -17,6 +19,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { PaginatedRequestDtoForResult } from 'src/dto/pagination.dto';
 import {
   ApiPaginatedResponse,
   ErrorResponse,
@@ -38,19 +41,25 @@ export class ResultsController {
   @ApiNotFoundResponse({ type: ErrorResponse })
   find() {}
 
+  @Get('')
+  @ApiTags('リザルト')
+  @ApiOperation({ operationId: '一括取得' })
+  @ApiPaginatedResponse(Results.Response)
+  findAll(@Query() query: PaginatedRequestDtoForResult) {}
+
   @Get('schedules/:schedule_id')
   @ApiParam({ name: 'schedule_id', type: 'integer', description: 'シフトID' })
   @ApiTags('リザルト一覧')
   @ApiOperation({ operationId: 'スケジュール指定' })
   @ApiPaginatedResponse(Results.Response)
-  findAll_schedules() {}
+  findAll_schedules(@Query() query: PaginatedRequestDtoForResult) {}
 
   @Get('users/:nsaid')
   @ApiParam({ name: 'nsaid', type: 'string', description: 'プレイヤーID' })
   @ApiTags('リザルト一覧')
   @ApiOperation({ operationId: 'プレイヤー指定' })
   @ApiPaginatedResponse(Results.Response)
-  findAll_users() {}
+  findAll_users(@Query() query: PaginatedRequestDtoForResult) {}
 
   @Post('')
   @ApiTags('リザルト')

@@ -34,12 +34,14 @@ export namespace Schedule {
     @ApiProperty({ type: [Number], description: 'オオモノ討伐数' })
     boss_kill_counts: number[];
     @ApiProperty({ type: 'integer', description: '救助数合計' })
-    help_count_total: number;
+    help_counts: number;
     @ApiProperty({ type: 'integer', description: '被救助数合計' })
-    dead_count_total: number;
+    dead_counts: number;
   }
 
   export class Stats {
+    @ApiProperty()
+    schedule: Metadata;
     @ApiProperty({ description: '統計' })
     my_result: Result;
     @ApiProperty({ description: '全国統計' })

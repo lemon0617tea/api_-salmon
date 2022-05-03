@@ -7,21 +7,21 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 
-export class PaginatedDto<T> {
-  @ApiProperty()
-  total: number;
-  @ApiProperty()
-  limit: number;
-  @ApiProperty()
-  offset: number;
-  results: T[];
-}
-
 export class ErrorResponse {
   @ApiProperty()
   error: string;
   @ApiProperty()
   error_description: string;
+}
+
+export class PaginatedDto<T> {
+  @ApiProperty({ type: 'integer', description: '総数' })
+  total: number;
+  @ApiProperty({ type: 'integer', description: '取得数' })
+  limit: number;
+  @ApiProperty({ type: 'integer', description: 'オフセット' })
+  offset: number;
+  results: T[];
 }
 
 export const ApiPaginatedResponse = <TModel extends Type<any>>(
