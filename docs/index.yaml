@@ -33,6 +33,62 @@ paths:
       responses:
         '200':
           description: ''
+  /results/{salmon_id}:
+    get:
+      operationId: リザルト取得
+      summary: ''
+      parameters:
+        - name: salmon_id
+          required: true
+          in: path
+          description: リザルトID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+      tags:
+        - リザルト
+    put:
+      operationId: リザルト更新
+      summary: ''
+      parameters:
+        - name: salmon_id
+          required: true
+          in: path
+          description: リザルトID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+      tags:
+        - リザルト
+    delete:
+      operationId: リザルト削除
+      summary: ''
+      parameters:
+        - name: salmon_id
+          required: true
+          in: path
+          description: リザルトID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+      tags:
+        - リザルト
+  /results:
+    post:
+      operationId: リザルト登録
+      summary: ''
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - リザルト
 info:
   title: Salmon Stats API Documents
   description: ''
