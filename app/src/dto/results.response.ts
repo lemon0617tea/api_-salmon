@@ -5,6 +5,7 @@ import {
   StageType,
   WeaponType,
 } from '@prisma/client';
+import { IsBoolean, IsEnum, IsIn, IsInt, Max, Min } from 'class-validator';
 
 export namespace Results {
   class Schedule {
@@ -18,15 +19,20 @@ export namespace Results {
     weapon_lists: WeaponType[];
   }
 
-  class JobResult {
+  export class JobResult {
+    @IsEnum(FailureReason)
     @ApiProperty({
       enum: FailureReason,
       nullable: true,
       description: '失敗理由',
     })
+    @IsInt()
+    @Max(2)
+    @Min(0)
     failure_reason: FailureReason;
     @ApiProperty({ type: 'integer', nullable: true, description: '失敗WAVE' })
     failure_wave: number;
+    @IsBoolean()
     @ApiProperty({ description: 'クリアしたか' })
     is_clear: Boolean;
   }
