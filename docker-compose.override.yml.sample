@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+    app:
+        container_name: salmon_stats_app
+        build:
+            context: ./app
+        ports:
+            - "5000:5000"
+        networks:
+            - salmon_stats_network
+        tty: true
+    server:
+        container_name: salmon_stats_server
+        restart: always
+        build:
+            context: ./nginx
+        ports:
+            - "443:443"
+            - "80:80"
+        networks:
+            - salmon_stats_network
+        depends_on:
+            - app
+
+networks: 
+  salmon_stats_network:
+    external: true
