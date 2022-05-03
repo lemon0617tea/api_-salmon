@@ -36,7 +36,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Response'
+                $ref: '#/components/schemas/Metadata'
       tags:
         - ユーザー
     put:
@@ -55,7 +55,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Response'
+                $ref: '#/components/schemas/Metadata'
       tags:
         - ユーザー
     delete:
@@ -71,6 +71,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Metadata'
       tags:
         - ユーザー
   /users:
@@ -90,7 +94,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Response'
+                $ref: '#/components/schemas/Metadata'
       tags:
         - ユーザー
   /results/{salmon_id}:
@@ -132,10 +136,20 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       tags:
         - リザルト
     delete:
-      operationId: リザルト削除
+      operationId: 削除
       summary: ''
       parameters:
         - name: salmon_id
@@ -147,6 +161,16 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       tags:
         - リザルト
   /results/schedules/{schedule_id}:
@@ -233,6 +257,26 @@ paths:
                 $ref: '#/components/schemas/Waves'
       tags:
         - ランキング
+  /schedules/{schedule_id}:
+    get:
+      operationId: 統計取得
+      summary: ''
+      parameters:
+        - name: schedule_id
+          required: true
+          in: path
+          description: シフトID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stats'
+      tags:
+        - スケジュール
 info:
   title: Salmon Stats API Documents
   description: ''
@@ -245,41 +289,6 @@ components:
     S2SRequestDTO:
       type: object
       properties: {}
-    Response:
-      type: object
-      properties:
-        salmon_id:
-          type: integer
-        boss_counts:
-          type: array
-          items:
-            type: number
-        boss_kill_counts:
-          type: array
-          items:
-            type: number
-        danger_rate:
-          type: double
-        start_time:
-          type: integer
-        end_time:
-          type: integer
-        play_time:
-          type: integer
-        schedule:
-          $ref: '#/components/schemas/Schedule'
-        job_results:
-          $ref: '#/components/schemas/JobResult'
-      required:
-        - salmon_id
-        - boss_counts
-        - boss_kill_counts
-        - danger_rate
-        - start_time
-        - end_time
-        - play_time
-        - schedule
-        - job_results
     PaginatedDto:
       type: object
       properties:
@@ -293,6 +302,22 @@ components:
         - total
         - limit
         - offset
+    Metadata:
+      type: object
+      properties:
+        id:
+          type: number
+        nsaid:
+          type: string
+        username:
+          type: string
+        thumbnail_url:
+          type: string
+      required:
+        - id
+        - nsaid
+        - username
+        - thumbnail_url
     Schedule:
       type: object
       properties:
@@ -304,10 +329,13 @@ components:
             - SHAKEHOUSE
             - SHAKELIFT
             - SHAKERIDE
+          description: ステージID
         start_time:
           type: integer
+          description: シフト開始時間
         end_time:
           type: integer
+          description: シフト終了時間
         weapon_lists:
           type: string
           enum:
@@ -367,6 +395,7 @@ components:
             - UMBRELLAAUTOASSAULT
             - CHARGERSPARK
             - SLOSHERVASE
+          description: 支給ブキ
       required:
         - stage_id
         - start_time
@@ -381,15 +410,109 @@ components:
             - TIMELIMIT
             - WIPEOUT
           nullable: true
+          description: 失敗理由
         failure_wave:
           type: integer
           nullable: true
+          description: 失敗WAVE
         is_clear:
           type: boolean
+          description: クリアしたか
       required:
         - failure_reason
         - failure_wave
         - is_clear
+    Players:
+      type: object
+      properties:
+        job_id:
+          type: integer
+          nullable: true
+          description: バイトID
+        grade_point:
+          type: integer
+          nullable: true
+          description: 評価レート
+        grade_point_delta:
+          type: integer
+          nullable: true
+          description: 評価レート変動値
+        job_rate:
+          type: integer
+          nullable: true
+          description: ジョブレート
+        job_score:
+          type: integer
+          nullable: true
+          description: バイトスコア
+        kuma_point:
+          type: integer
+          nullable: true
+          description: クマサンポイント
+      required:
+        - job_id
+        - grade_point
+        - grade_point_delta
+        - job_rate
+        - job_score
+        - kuma_point
+    Response:
+      type: object
+      properties:
+        salmon_id:
+          type: integer
+          description: ID
+        boss_counts:
+          description: オオモノ出現数
+          type: array
+          items:
+            type: number
+        boss_kill_counts:
+          description: オオモノ討伐数
+          type: array
+          items:
+            type: number
+        danger_rate:
+          type: double
+          description: キケン度
+        start_time:
+          type: integer
+          description: シフト開始時間
+        end_time:
+          type: integer
+          description: シフト終了時間
+        play_time:
+          type: integer
+          description: プレイ時間
+        schedule:
+          description: シフト
+          allOf:
+            - $ref: '#/components/schemas/Schedule'
+        job_results:
+          description: リザルト
+          allOf:
+            - $ref: '#/components/schemas/JobResult'
+        my_result:
+          description: 個人リザルト
+          allOf:
+            - $ref: '#/components/schemas/Players'
+        other_results:
+          description: 仲間リザルト
+          type: array
+          items:
+            $ref: '#/components/schemas/Players'
+      required:
+        - salmon_id
+        - boss_counts
+        - boss_kill_counts
+        - danger_rate
+        - start_time
+        - end_time
+        - play_time
+        - schedule
+        - job_results
+        - my_result
+        - other_results
     ErrorResponse:
       type: object
       properties:
@@ -405,6 +528,7 @@ components:
       properties:
         salmon_id:
           type: integer
+          description: ID
         event_type:
           type: string
           enum:
@@ -415,20 +539,26 @@ components:
             - RALLY
             - FOG
             - MISSILE
+          description: イベント
         water_level:
           type: string
           enum:
             - LOW
             - MIDDLE
             - HIGH
+          description: 潮位
         golden_ikura_num:
           type: integer
+          description: 金イクラ納品数
         golden_ikura_pop_num:
           type: integer
+          description: 金イクラ出現数
         ikura_num:
           type: integer
+          description: 赤イクラ獲得数
         quota_num:
           type: integer
+          description: ノルマ
       required:
         - salmon_id
         - event_type
@@ -437,3 +567,58 @@ components:
         - golden_ikura_pop_num
         - ikura_num
         - quota_num
+    Job:
+      type: object
+      properties:
+        clear:
+          type: integer
+          description: クリア回数
+        failure:
+          type: integer
+          description: 失敗回数
+      required:
+        - clear
+        - failure
+    Result:
+      type: object
+      properties:
+        job_result:
+          description: バイト結果
+          allOf:
+            - $ref: '#/components/schemas/Job'
+        boss_counts:
+          description: オオモノ出現数
+          type: array
+          items:
+            type: number
+        boss_kill_counts:
+          description: オオモノ討伐数
+          type: array
+          items:
+            type: number
+        help_count_total:
+          type: integer
+          description: 救助数合計
+        dead_count_total:
+          type: integer
+          description: 被救助数合計
+      required:
+        - job_result
+        - boss_counts
+        - boss_kill_counts
+        - help_count_total
+        - dead_count_total
+    Stats:
+      type: object
+      properties:
+        my_result:
+          description: 統計
+          allOf:
+            - $ref: '#/components/schemas/Result'
+        other_results:
+          description: 全国統計
+          allOf:
+            - $ref: '#/components/schemas/Result'
+      required:
+        - my_result
+        - other_results

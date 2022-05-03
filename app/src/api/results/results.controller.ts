@@ -61,11 +61,15 @@ export class ResultsController {
   @ApiParam({ name: 'salmon_id', type: 'integer', description: 'リザルトID' })
   @ApiTags('リザルト')
   @ApiOperation({ operationId: '更新' })
+  @ApiResponse({ status: HttpStatus.OK, type: Results.Response })
+  @ApiNotFoundResponse({ type: ErrorResponse })
   update() {}
 
   @Delete(':salmon_id')
   @ApiParam({ name: 'salmon_id', type: 'integer', description: 'リザルトID' })
   @ApiTags('リザルト')
-  @ApiOperation({ operationId: 'リザルト削除' })
+  @ApiOperation({ operationId: '削除' })
+  @ApiResponse({ status: HttpStatus.OK, type: Results.Response })
+  @ApiNotFoundResponse({ type: ErrorResponse })
   delete() {}
 }

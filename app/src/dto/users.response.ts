@@ -1,21 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export namespace Users {
-  export interface Metadata {
+  interface MetadataType {
     id: number;
     nsaid: string;
     username: string;
     thumbnail_url: string;
   }
-
-  export class Response implements Metadata {
+  export class Metadata implements MetadataType {
     @ApiProperty()
     id: number;
     @ApiProperty()
     nsaid: string;
     @ApiProperty()
     username: string;
-    @ApiProperty({ type: 'url' })
+    @ApiProperty()
     thumbnail_url: string;
   }
 }

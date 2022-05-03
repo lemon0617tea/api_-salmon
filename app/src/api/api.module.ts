@@ -8,10 +8,11 @@ import { ResultsModule } from './results/results.module';
 import { RankingModule } from './ranking/ranking.module';
 import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
+import { SchedulesModule } from './schedules/schedules.module';
 
 @Module({
   controllers: [ApiController, S2SController, UsersController],
   providers: [ApiService, S2SService],
-  imports: [S2SModule, ResultsModule, RankingModule, UsersModule],
+  imports: [S2SModule, ResultsModule, RankingModule, UsersModule, SchedulesModule],
 })
 export class ApiModule {}
