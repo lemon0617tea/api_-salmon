@@ -6,6 +6,190 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "postgres"
   url      = env("DATABASE_URL")
+}
+
+enum WaterLevel {
+  LOW
+  MIDDLE
+  HIGH
+}
+
+enum FailureReason {
+  TIMELIMIT
+  WIPEOUT
+}
+
+enum EventType {
+  WATERLEVELS
+  RUSH
+  GEYSER
+  GRILLER
+  RALLY
+  FOG
+  MISSILE
+}
+
+enum Species {
+  INKLING
+  OCTOLING
+}
+
+enum Style {
+  GIRL
+  BOY
+}
+
+enum SpecialType {
+  SPLATBOMBLAUNCHER
+  STINGRAY
+  INKJET
+  SPLASHDOWN
+}
+
+enum StageType {
+  SHAKEUP
+  SHAKESHIP
+  SHAKEHOUSE
+  SHAKELIFT
+  SHAKERIDE
+}
+
+enum WeaponType {
+  RANDOMGOLD
+  RANDOMGREEN
+  SHOOTERSHORT
+  SHOOTERFIRST
+  SHOOTERPRECISION
+  SHOOTERBLAZE
+  SHOOTERNORMAL
+  SHOOTERGRAVITY
+  SHOOTERQUICKMIDDLE
+  SHOOTEREXPERT
+  SHOOTERHEAVY
+  SHOOTERLONG
+  SHOOTERBLASTERSHORT
+  SHOOTERBLASTERMIDDLE
+  SHOOTERBLASTERLONG
+  SHOOTERBLASTERLIGHTSHORT
+  SHOOTERBLASTERLIGHT
+  SHOOTERBLASTERLIGHTLONG
+  SHOOTERTRIPLEQUICK
+  SHOOTERTRIPLEMIDDLE
+  SHOOTERFLASH
+  ROLLERCOMPACT
+  ROLLERNORMAL
+  ROLLERHEAVY
+  ROLLERHUNTER
+  ROLLERBRUSHMINI
+  ROLLERBRUSHNORMAL
+  CHARGERQUICK
+  CHARGERNORMAL
+  CHARGERNORMALSCOPE
+  CHARGERLONG
+  CHARGERLONGSCOPE
+  CHARGERLIGHT
+  CHARGERKEEPER
+  SLOSHERSTRONG
+  SLOSHERDIFFUSION
+  SLOSHERLAUNCHER
+  SLOSHERBATHTUB
+  SLOSHERWASHTUB
+  SPINNERQUICK
+  SPINNERSTANDARD
+  SPINNERHYPER
+  SPINNERDOWNPOUR
+  SPINNERSEREIN
+  TWINSSHORT
+  TWINSNORMAL
+  TWINSGALLON
+  TWINSDUAL
+  TWINSSTEPPER
+  UMBRELLANORMAL
+  UMBRELLAWIDE
+  UMBRELLACOMPACT
+  SHOOTERBLASTERBURST
+  UMBRELLAAUTOASSAULT
+  CHARGERSPARK
+  SLOSHERVASE
+}
+
+model Results {
+  salmon_id       BigInt         @id @default(autoincrement())
+  bossCounts      Int[]
+  bossKillCounts  Int[]
+  gradeId         Int
+  dangerRate      Float
+  endTime         Int
+  gradePoint      Int
+  gradePointDelta Int
+  jobId           Int
+  jobRate         Int
+  jobScore        Int
+  kumaPoint       Int
+  playTime        Int
+  startTime       Int
+  failureReason   FailureReason?
+  failureWave     Int?
+  isClear         Boolean
+  players         Players[]
+  waves           Waves[]
+  schedule        Schedule       @relation(fields: [startTime], references: [startTime])
+}
+
+model Schedule {
+  startTime  Int          @id
+  stageId    StageType
+  endTime    Int
+  weaponList WeaponType[]
+  Results    Results[]
+}
+
+model Players {
+  id             BigInt       @id @default(autoincrement())
+  salmon_id      BigInt
+  bossKillCounts Int[]
+  nsaid          String
+  deadCount      Int
+  goldenIkuraNum Int
+  helpCount      Int
+  ikuraNum       Int
+  name           String
+  species        Species
+  style          Style
+  specialId      SpecialType
+  specialCount   Int[]
+  weaponList     WeaponType[]
+  Results        Results      @relation(fields: [salmon_id], references: [salmon_id])
+}
+
+model Waves {
+  id                BigInt     @id @default(autoincrement())
+  salmon_id         BigInt
+  eventType         EventType
+  waterLevel        WaterLevel
+  goldenIkuraNum    Int
+  goldenIkuraPopNum Int
+  ikuraNum          Int
+  quotaNum          Int
+  Results           Results    @relation(fields: [salmon_id], references: [salmon_id])
+}
+
+model Users {
+  id           BigInt      @id @default(autoincrement())
+  uid          BigInt      @unique
+  username     String
+  mail         String      @unique
+  password     String
+  thumbnailURL String
+  apiToken     String
+  accounts     SplatNet2[]
+}
+
+model SplatNet2 {
+  id      BigInt  @id @default(autoincrement())
+  nsaid   String  @unique
+  Users   Users?  @relation(fields: [usersId], references: [id])
+  usersId BigInt?
 }
