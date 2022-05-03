@@ -19,6 +19,52 @@ paths:
       responses:
         '201':
           description: ''
+  /users/{nsaid}:
+    get:
+      operationId: 取得
+      summary: ''
+      parameters:
+        - name: nsaid
+          required: true
+          in: path
+          description: ユーザーID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - ユーザー
+    put:
+      operationId: 更新
+      summary: ''
+      parameters:
+        - name: nsaid
+          required: true
+          in: path
+          description: ユーザーID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - ユーザー
+    delete:
+      operationId: 削除
+      summary: ''
+      parameters:
+        - name: nsaid
+          required: true
+          in: path
+          description: ユーザーID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - ユーザー
   /api/waves:
     post:
       operationId: WavesController_create
@@ -35,7 +81,7 @@ paths:
           description: ''
   /results/{salmon_id}:
     get:
-      operationId: リザルト取得
+      operationId: 取得
       summary: ''
       parameters:
         - name: salmon_id
@@ -50,7 +96,7 @@ paths:
       tags:
         - リザルト
     put:
-      operationId: リザルト更新
+      operationId: 更新
       summary: ''
       parameters:
         - name: salmon_id
@@ -79,9 +125,41 @@ paths:
           description: ''
       tags:
         - リザルト
+  /results/schedules/{schedule_id}:
+    get:
+      operationId: スケジュール指定
+      summary: ''
+      parameters:
+        - name: schedule_id
+          required: true
+          in: path
+          description: シフトID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+      tags:
+        - リザルト一覧
+  /results/users/{nsaid}:
+    get:
+      operationId: プレイヤー指定
+      summary: ''
+      parameters:
+        - name: nsaid
+          required: true
+          in: path
+          description: プレイヤーID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - リザルト一覧
   /results:
     post:
-      operationId: リザルト登録
+      operationId: 登録
       summary: ''
       parameters: []
       responses:
@@ -89,6 +167,22 @@ paths:
           description: ''
       tags:
         - リザルト
+  /ranking/schedules/{schedule_id}:
+    get:
+      operationId: 取得
+      summary: ''
+      parameters:
+        - name: schedule_id
+          required: true
+          in: path
+          description: シフトID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: ''
+      tags:
+        - ランキング
 info:
   title: Salmon Stats API Documents
   description: ''
