@@ -54,8 +54,8 @@ export class UsersController {
   @ApiTags('ユーザー')
   @ApiOperation({ operationId: '取得' })
   @ApiOkResponse({ type: User.Metadata })
-  find(@Param() request: FindRequest): Promise<SplatNet2> {
-    return this.service.find({ nsaid: request.nsaid });
+  find(@Param() request: Prisma.UsersWhereUniqueInput): Promise<Users> {
+    return this.service.find(request);
   }
 
   @Get('')

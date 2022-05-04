@@ -367,6 +367,16 @@ paths:
                 $ref: '#/components/schemas/Stats'
       tags:
         - スケジュール
+  /schedules:
+    post:
+      operationId: 追加
+      summary: ''
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - スケジュール
 info:
   title: Salmon Stats API Documents
   description: ''
@@ -412,13 +422,7 @@ components:
       type: object
       properties:
         stage_id:
-          type: string
-          enum:
-            - SHAKEUP
-            - SHAKESHIP
-            - SHAKEHOUSE
-            - SHAKELIFT
-            - SHAKERIDE
+          type: integer
           description: ステージID
         start_time:
           type: integer
@@ -427,64 +431,7 @@ components:
           type: integer
           description: シフト終了時間
         weapon_lists:
-          type: string
-          enum:
-            - RANDOMGOLD
-            - RANDOMGREEN
-            - SHOOTERSHORT
-            - SHOOTERFIRST
-            - SHOOTERPRECISION
-            - SHOOTERBLAZE
-            - SHOOTERNORMAL
-            - SHOOTERGRAVITY
-            - SHOOTERQUICKMIDDLE
-            - SHOOTEREXPERT
-            - SHOOTERHEAVY
-            - SHOOTERLONG
-            - SHOOTERBLASTERSHORT
-            - SHOOTERBLASTERMIDDLE
-            - SHOOTERBLASTERLONG
-            - SHOOTERBLASTERLIGHTSHORT
-            - SHOOTERBLASTERLIGHT
-            - SHOOTERBLASTERLIGHTLONG
-            - SHOOTERTRIPLEQUICK
-            - SHOOTERTRIPLEMIDDLE
-            - SHOOTERFLASH
-            - ROLLERCOMPACT
-            - ROLLERNORMAL
-            - ROLLERHEAVY
-            - ROLLERHUNTER
-            - ROLLERBRUSHMINI
-            - ROLLERBRUSHNORMAL
-            - CHARGERQUICK
-            - CHARGERNORMAL
-            - CHARGERNORMALSCOPE
-            - CHARGERLONG
-            - CHARGERLONGSCOPE
-            - CHARGERLIGHT
-            - CHARGERKEEPER
-            - SLOSHERSTRONG
-            - SLOSHERDIFFUSION
-            - SLOSHERLAUNCHER
-            - SLOSHERBATHTUB
-            - SLOSHERWASHTUB
-            - SPINNERQUICK
-            - SPINNERSTANDARD
-            - SPINNERHYPER
-            - SPINNERDOWNPOUR
-            - SPINNERSEREIN
-            - TWINSSHORT
-            - TWINSNORMAL
-            - TWINSGALLON
-            - TWINSDUAL
-            - TWINSSTEPPER
-            - UMBRELLANORMAL
-            - UMBRELLAWIDE
-            - UMBRELLACOMPACT
-            - SHOOTERBLASTERBURST
-            - UMBRELLAAUTOASSAULT
-            - CHARGERSPARK
-            - SLOSHERVASE
+          type: integer
           description: 支給ブキ
       required:
         - stage_id

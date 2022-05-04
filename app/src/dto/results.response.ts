@@ -1,22 +1,17 @@
 import { ApiProperty, ApiResponse } from '@nestjs/swagger';
-import {
-  FailureReason,
-  SpecialType,
-  StageType,
-  WeaponType,
-} from '@prisma/client';
+import { FailureReason, SpecialType } from '@prisma/client';
 import { IsBoolean, IsEnum, IsIn, IsInt, Max, Min } from 'class-validator';
 
 export namespace Results {
   class Schedule {
-    @ApiProperty({ enum: StageType, description: 'ステージID' })
-    stage_id: StageType;
+    @ApiProperty({ type: 'integer', description: 'ステージID' })
+    stage_id: number;
     @ApiProperty({ type: 'integer', description: 'シフト開始時間' })
     start_time: number;
     @ApiProperty({ type: 'integer', description: 'シフト終了時間' })
     end_time: number;
-    @ApiProperty({ enum: WeaponType, description: '支給ブキ' })
-    weapon_lists: WeaponType[];
+    @ApiProperty({ type: 'integer', description: '支給ブキ' })
+    weapon_lists: number[];
   }
 
   export class JobResult {
@@ -83,7 +78,7 @@ export namespace Results {
     })
     boss_kill_counts: number[];
     @ApiProperty({ description: '支給ブキ' })
-    weapon_lists: WeaponType[];
+    weapon_lists: number[];
     @ApiProperty({ enum: SpecialType, description: 'スペシャルID' })
     special_id: SpecialType;
     @ApiProperty({

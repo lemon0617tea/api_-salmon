@@ -145,11 +145,12 @@ model Results {
 }
 
 model Schedule {
-  startTime  Int          @id
-  stageId    StageType
-  endTime    Int
-  weaponList WeaponType[]
-  Results    Results[]
+  startTime   Int       @id
+  stageId     Int
+  endTime     Int
+  rareWeapon  Int?
+  weaponLists Int[]
+  Results     Results[]
 }
 
 model Players {

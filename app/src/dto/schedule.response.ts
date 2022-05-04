@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { StageType, WeaponType } from '@prisma/client';
 
 export class CountedDto<T> {
   key: T;
@@ -13,10 +12,10 @@ export namespace Schedule {
     start_time: number;
     @ApiProperty({ type: 'integer' })
     end_time: number;
-    @ApiProperty({ enum: StageType })
-    stage_id: StageType;
-    @ApiProperty({ type: [WeaponType] })
-    weapon_lists: WeaponType[];
+    @ApiProperty({ type: 'integer' })
+    stage_id: number;
+    @ApiProperty()
+    weapon_lists: number[];
   }
 
   export class Job {
