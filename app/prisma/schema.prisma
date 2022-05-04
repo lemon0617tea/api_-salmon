@@ -16,6 +16,15 @@ enum WaterLevel {
   HIGH
 }
 
+enum GradeType {
+  INTERN
+  APPARENTICE
+  PARTTIMER
+  GOGETTER
+  OVERACHIVER
+  PROFRESHIONAL
+}
+
 enum FailureReason {
   TIMELIMIT
   WIPEOUT
@@ -116,26 +125,22 @@ enum WeaponType {
 }
 
 model Results {
-  salmon_id       BigInt         @id @default(autoincrement())
-  bossCounts      Int[]
-  bossKillCounts  Int[]
-  gradeId         Int
-  dangerRate      Float
-  endTime         Int
-  gradePoint      Int
-  gradePointDelta Int
-  jobId           Int
-  jobRate         Int
-  jobScore        Int
-  kumaPoint       Int
-  playTime        Int
-  startTime       Int
-  failureReason   FailureReason?
-  failureWave     Int?
-  isClear         Boolean
-  players         Players[]
-  waves           Waves[]
-  schedule        Schedule       @relation(fields: [startTime], references: [startTime])
+  salmon_id      Int            @id @default(autoincrement())
+  bossCounts     Int[]
+  bossKillCounts Int[]
+  dangerRate     Float
+  endTime        Int
+  playTime       Int
+  startTime      Int
+  failureReason  FailureReason?
+  failureWave    Int?
+  isClear        Boolean
+  members        String[] // プレイヤーID一覧
+  players        Players[]
+  waves          Waves[]
+  schedule       Schedule       @relation(fields: [startTime], references: [startTime])
+
+  @@unique([playTime, members])
 }
 
 model Schedule {
@@ -147,49 +152,54 @@ model Schedule {
 }
 
 model Players {
-  id             BigInt       @id @default(autoincrement())
-  salmon_id      BigInt
-  bossKillCounts Int[]
-  nsaid          String
-  deadCount      Int
-  goldenIkuraNum Int
-  helpCount      Int
-  ikuraNum       Int
-  name           String
-  species        Species
-  style          Style
-  specialId      SpecialType
-  specialCount   Int[]
-  weaponList     WeaponType[]
-  Results        Results      @relation(fields: [salmon_id], references: [salmon_id])
+  id              Int          @id @default(autoincrement())
+  salmon_id       Int
+  nsaid           String
+  bossKillCounts  Int[]
+  deadCount       Int
+  goldenIkuraNum  Int
+  helpCount       Int
+  ikuraNum        Int
+  jobId           Int?
+  jobScore        Int?
+  jobRate         Int?
+  kumaPoint       Int?
+  gradeId         GradeType?
+  gradePoint      Int?
+  gradePointDelta Int?
+  name            String
+  species         Species
+  style           Style
+  specialId       SpecialType
+  specialCount    Int[]
+  weaponList      WeaponType[]
+  Results         Results      @relation(fields: [salmon_id], references: [salmon_id])
 }
 
 model Waves {
-  id                BigInt     @id @default(autoincrement())
-  salmon_id         BigInt
-  eventType         EventType
-  waterLevel        WaterLevel
-  goldenIkuraNum    Int
-  goldenIkuraPopNum Int
-  ikuraNum          Int
-  quotaNum          Int
-  Results           Results    @relation(fields: [salmon_id], references: [salmon_id])
+  id                Int            @id @default(autoincrement())
+  index             Int // WAVE数
+  salmon_id         Int // リザルトID
+  eventType         EventType // イベント
+  waterLevel        WaterLevel // 潮位
+  goldenIkuraNum    Int // 金イクラ数
+  goldenIkuraPopNum Int // 金イクラドロップ数
+  ikuraNum          Int // 赤イクラ数
+  quotaNum          Int // ノルマ数
+  failureReason     FailureReason? // 失敗理由
+  isClear           Boolean // クリアしたか
+  Results           Results        @relation(fields: [salmon_id], references: [salmon_id])
 }
 
 model Users {
-  id           BigInt      @id @default(autoincrement())
-  uid          BigInt      @unique
-  username     String
-  mail         String      @unique
-  password     String
-  thumbnailURL String
-  apiToken     String
-  accounts     SplatNet2[]
+  id           Int     @id @default(autoincrement())
+  uid          String  @unique // SplatNet2 ID
+  username     String? // ユーザ名
+  mail         String? // メールアドレス
+  password     String? // パスワード
+  thumbnailURL String? // 表示される画像
 }
 
 model SplatNet2 {
-  id      BigInt  @id @default(autoincrement())
-  nsaid   String  @unique
-  Users   Users?  @relation(fields: [usersId], references: [id])
-  usersId BigInt?
+  nsaid String @id @unique
 }

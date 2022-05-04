@@ -1,5 +1,33 @@
 openapi: 3.0.0
 paths:
+  /users:
+    post:
+      operationId: 作成
+      summary: ''
+      parameters:
+        - name: uid
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '201':
+          description: ''
+      tags:
+        - ユーザー
+    get:
+      operationId: 一覧取得
+      summary: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Metadata'
+      tags:
+        - ユーザー
   /users/{nsaid}:
     get:
       operationId: 取得
@@ -8,7 +36,7 @@ paths:
         - name: nsaid
           required: true
           in: path
-          description: ユーザーID
+          description: アカウントID
           schema:
             type: string
       responses:
@@ -41,26 +69,6 @@ paths:
         - ユーザー
     delete:
       operationId: 削除
-      summary: ''
-      parameters:
-        - name: nsaid
-          required: true
-          in: path
-          description: ユーザーID
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Metadata'
-      tags:
-        - ユーザー
-  /users:
-    post:
-      operationId: 取得
       summary: ''
       parameters:
         - name: nsaid
@@ -548,6 +556,16 @@ components:
           description: 被救助数
         boss_kill_counts:
           description: オオモノ討伐数
+          default:
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
           type: array
           items:
             type: number
@@ -566,6 +584,10 @@ components:
           description: スペシャルID
         special_counts:
           description: スペシャル使用回数
+          default:
+            - 0
+            - 0
+            - 0
           type: array
           items:
             type: number
@@ -593,16 +615,36 @@ components:
           description: ID
         boss_counts:
           description: オオモノ出現数
+          default:
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
           type: array
           items:
             type: number
         boss_kill_counts:
           description: オオモノ討伐数
+          default:
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
+            - 0
           type: array
           items:
             type: number
         danger_rate:
-          type: double
+          type: number
           description: キケン度
         start_time:
           type: integer

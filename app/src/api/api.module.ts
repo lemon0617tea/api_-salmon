@@ -9,10 +9,18 @@ import { RankingModule } from './ranking/ranking.module';
 import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
 import { SchedulesModule } from './schedules/schedules.module';
+import { UsersService } from './users/users.service';
+import { PrismaService } from 'src/prisma.service';
 
 @Module({
   controllers: [ApiController, S2SController, UsersController],
-  providers: [ApiService, S2SService],
-  imports: [S2SModule, ResultsModule, RankingModule, UsersModule, SchedulesModule],
+  providers: [ApiService, S2SService, UsersService, PrismaService],
+  imports: [
+    S2SModule,
+    ResultsModule,
+    RankingModule,
+    UsersModule,
+    SchedulesModule,
+  ],
 })
 export class ApiModule {}

@@ -1,12 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export namespace Users {
+export namespace User {
   interface MetadataType {
     id: number;
     nsaid: string;
     username: string;
     thumbnail_url: string;
   }
+
   export class Metadata implements MetadataType {
     @ApiProperty()
     id: number;

@@ -76,24 +76,40 @@ export namespace Results {
     help_counts: number;
     @ApiProperty({ type: 'integer', description: '被救助数' })
     dead_counts: number;
-    @ApiProperty({ type: [Number], description: 'オオモノ討伐数' })
+    @ApiProperty({
+      type: [Number],
+      description: 'オオモノ討伐数',
+      default: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    })
     boss_kill_counts: number[];
     @ApiProperty({ description: '支給ブキ' })
     weapon_lists: WeaponType[];
     @ApiProperty({ enum: SpecialType, description: 'スペシャルID' })
     special_id: SpecialType;
-    @ApiProperty({ type: [Number], description: 'スペシャル使用回数' })
+    @ApiProperty({
+      type: [Number],
+      description: 'スペシャル使用回数',
+      default: [0, 0, 0],
+    })
     special_counts: number[];
   }
 
   export class Response {
     @ApiProperty({ type: 'integer', description: 'ID' })
     salmon_id: number;
-    @ApiProperty({ type: [Number], description: 'オオモノ出現数' })
+    @ApiProperty({
+      type: [Number],
+      description: 'オオモノ出現数',
+      default: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    })
     boss_counts: number[];
-    @ApiProperty({ type: [Number], description: 'オオモノ討伐数' })
+    @ApiProperty({
+      type: [Number],
+      description: 'オオモノ討伐数',
+      default: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    })
     boss_kill_counts: number[];
-    @ApiProperty({ type: 'double', description: 'キケン度' })
+    @ApiProperty({ description: 'キケン度' })
     danger_rate: number;
     @ApiProperty({ type: 'integer', description: 'シフト開始時間' })
     start_time: number;
