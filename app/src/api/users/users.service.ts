@@ -6,15 +6,32 @@ import { PrismaService } from 'src/prisma.service';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createUser(data: Prisma.UsersCreateInput): Promise<Users> {
-    return this.prisma.users.create({ data });
+  async create(data: Prisma.UsersCreateInput) {
+    return await this.prisma
+      .$transaction(async (prisma): Promise<Users> => {
+        return await prisma.users.upsert({
+          create: data,
+          update: data,
+          where: data,
+        });
+      })
+      .catch(console.error)
+      .finally(() => {
+        this.prisma.$disconnect();
+      });
   }
 
   async findAll(): Promise<Users[]> {
     return this.prisma.users.findMany();
   }
 
-  async find(input: Prisma.SplatNet2WhereUniqueInput): Promise<SplatNet2> {
-    return this.prisma.splatNet2.findUnique({ where: input });
+  async find(unique: Prisma.UsersWhereUniqueInput): Promise<Users> {
+    return await this.prisma.$transaction(async (prisma): Promise<Users> => {
+      return await prisma.users.findUnique({
+        where: {
+          uid: unique.uid,
+        },
+      });
+    });
   }
 }

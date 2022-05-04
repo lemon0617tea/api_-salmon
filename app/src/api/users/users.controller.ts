@@ -20,7 +20,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Prisma, SplatNet2, Users } from '@prisma/client';
+import { prisma, Prisma, SplatNet2, Users } from '@prisma/client';
 import { Expose, Transform } from 'class-transformer';
 import { IsIn, IsInt, IsString, Length } from 'class-validator';
 import { PaginatedDto } from 'src/dto/response.interface';
@@ -42,8 +42,11 @@ export class UsersController {
   @ApiOperation({ operationId: '作成' })
   @ApiResponse({ status: HttpStatus.CREATED })
   @ApiQuery({ name: 'uid', type: 'string' })
-  createUser(@Query() data: Prisma.UsersCreateInput): Promise<Users> {
-    return this.service.createUser(data);
+  create(@Query() data: Prisma.UsersCreateInput) {
+    return this.service
+      .create(data)
+      .catch(console.error)
+      .finally(() => {});
   }
 
   @Get(':nsaid')
