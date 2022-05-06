@@ -81,7 +81,7 @@ export namespace Results {
       default: [0, 0, 0, 0, 0, 0, 0, 0, 0],
     })
     boss_kill_counts: number[];
-    @ApiProperty({ description: '支給ブキ' })
+    @ApiProperty({ type: [Number], description: '支給ブキ' })
     weapon_lists: number[];
     @ApiProperty({ type: 'integer', description: 'スペシャルID' })
     special_id: number;

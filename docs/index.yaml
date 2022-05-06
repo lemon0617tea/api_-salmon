@@ -25,7 +25,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Metadata'
+                title: PaginatedResponseOfMetadata
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedDto'
+                  - properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Metadata'
       tags:
         - ユーザー
   /users/{nsaid}:
@@ -466,27 +473,6 @@ tags: []
 servers: []
 components:
   schemas:
-    PaginatedDto:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: 総数
-        limit:
-          type: integer
-          description: 取得数
-        offset:
-          type: integer
-          description: オフセット
-        results:
-          type: array
-          items:
-            type: string
-      required:
-        - total
-        - limit
-        - offset
-        - results
     Metadata:
       type: object
       properties:
@@ -503,6 +489,22 @@ components:
         - nsaid
         - username
         - thumbnail_url
+    PaginatedDto:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: 総数
+        limit:
+          type: integer
+          description: 取得数
+        offset:
+          type: integer
+          description: オフセット
+      required:
+        - total
+        - limit
+        - offset
     Schedule:
       type: object
       properties:
@@ -605,7 +607,7 @@ components:
           description: 支給ブキ
           type: array
           items:
-            type: string
+            type: number
         special_id:
           type: integer
           description: スペシャルID

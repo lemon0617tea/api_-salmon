@@ -21,13 +21,13 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { PaginatedRequestDtoForResult } from 'src/dto/pagination.dto';
-import { ResultRequestBody } from 'src/dto/request/results.request';
 import {
   ApiPaginatedResponse,
-  ErrorResponse,
   PaginatedDto,
-} from 'src/dto/response.interface';
+  PaginatedRequestDtoForResult,
+} from 'src/dto/pagination.dto';
+import { ResultRequestBody } from 'src/dto/request/results.request';
+import { ErrorResponse } from 'src/dto/response.interface';
 import { Results } from 'src/dto/results.response';
 import { ResultsService } from './results.service';
 

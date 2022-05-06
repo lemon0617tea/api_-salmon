@@ -7,13 +7,15 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ValidateNested } from 'class-validator';
-import { PaginatedRequestDto } from 'src/dto/pagination.dto';
+import {
+  ApiPaginatedResponse,
+  PaginatedRequestDto,
+} from 'src/dto/pagination.dto';
 import {
   ScheduleFilterDto,
   ScheduleRequest,
   ScheduleRequestBody,
 } from 'src/dto/request/schedules.request';
-import { ApiPaginatedResponse } from 'src/dto/response.interface';
 import { PaginatedResponseDto, Schedule } from 'src/dto/schedule.response';
 import { SchedulesService } from './schedules.service';
 

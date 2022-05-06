@@ -23,7 +23,7 @@ import {
 import { prisma, Prisma, SplatNet2, Users } from '@prisma/client';
 import { Expose, Transform } from 'class-transformer';
 import { IsIn, IsInt, IsString, Length } from 'class-validator';
-import { PaginatedDto } from 'src/dto/response.interface';
+import { ApiPaginatedResponse, PaginatedDto } from 'src/dto/pagination.dto';
 import { User } from 'src/dto/users.response';
 import { UsersService } from './users.service';
 
@@ -33,7 +33,6 @@ class FindRequest {
 }
 
 @Controller('users')
-@ApiExtraModels(PaginatedDto)
 export class UsersController {
   constructor(private readonly service: UsersService) {}
 
@@ -61,7 +60,7 @@ export class UsersController {
   @Get('')
   @ApiTags('ユーザー')
   @ApiOperation({ operationId: '一覧取得' })
-  @ApiOkResponse({ type: User.Metadata })
+  @ApiPaginatedResponse(User.Metadata)
   findAll(): Promise<Users[]> {
     return this.service.findAll();
   }

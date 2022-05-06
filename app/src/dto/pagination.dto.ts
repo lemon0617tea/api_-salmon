@@ -4,7 +4,13 @@
  * @date 2020-10-11
  */
 
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { applyDecorators, Type } from '@nestjs/common';
+import {
+  ApiOkResponse,
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { Expose, Transform } from 'class-transformer';
 import { IsInt, IsOptional, Max, Min } from 'class-validator';
 
@@ -38,3 +44,36 @@ export class PaginatedRequestDtoForResult extends PaginatedRequestDto {
   })
   readonly is_only_clear: Boolean = false;
 }
+
+export class PaginatedDto<T> {
+  @ApiProperty({ type: 'integer', description: '総数' })
+  total: number;
+  @ApiProperty({ type: 'integer', description: '取得数' })
+  limit: number;
+  @ApiProperty({ type: 'integer', description: 'オフセット' })
+  offset: number;
+  results: T[];
+}
+
+export const ApiPaginatedResponse = <TModel extends Type<any>>(
+  model: TModel,
+) => {
+  return applyDecorators(
+    ApiOkResponse({
+      schema: {
+        title: `PaginatedResponseOf${model.name}`,
+        allOf: [
+          { $ref: getSchemaPath(PaginatedDto) },
+          {
+            properties: {
+              results: {
+                type: 'array',
+                items: { $ref: getSchemaPath(model) },
+              },
+            },
+          },
+        ],
+      },
+    }),
+  );
+};
