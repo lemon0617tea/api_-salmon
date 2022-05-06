@@ -12,4 +12,4 @@ init:
 
 .PHONY: migrate
 migrate:
-	cd app && yarn prisma migrate --name init
+	cd app && yarn prisma migrate dev --name init
