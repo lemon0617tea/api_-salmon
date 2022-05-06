@@ -8,7 +8,7 @@ down:
 
 .PHONY: init
 init:
-	cp docker-compose.override.yml.sample docker-compose.yml && cp .env.sample .env
+	cp docker-compose.override.yml.sample docker-compose.yml && cp .env.sample .env && cp .env.sample app/.env
 
 .PHONY: migrate
 migrate:

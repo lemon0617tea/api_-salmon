@@ -1,27 +1,42 @@
 version: "3.8"
 services:
-    app:
-        container_name: salmon_stats_app
-        build:
-            context: ./app
+    # app:
+    #     container_name: salmon_stats_app
+    #     build:
+    #         context: ./app
+    #     ports:
+    #         - "5000:5000"
+    #     networks:
+    #         - salmon_stats_network
+    # server:
+    #     container_name: salmon_stats_server
+    #     restart: always
+    #     build:
+    #         context: ./nginx
+    #     ports:
+    #         - 443:443
+    #         - 80:80
+    #     networks:
+    #         - salmon_stats_network
+    #     depends_on:
+    #         - app
+    db:
+        image: postgres:14.2
+        container_name: salmon_stats_db
+        # build:
+        #   context: ./db
         ports:
-            - "5000:5000"
-        networks:
-            - salmon_stats_network
-        tty: true
-    server:
-        container_name: salmon_stats_server
-        restart: always
-        build:
-            context: ./nginx
-        ports:
-            - "443:443"
-            - "80:80"
-        networks:
-            - salmon_stats_network
-        depends_on:
-            - app
+          - 5432:5432
+        environment:
+          POSTGRES_USER: $MYSQL_USER
+          POSTGRES_PASSWORD: $MYSQL_ROOT_PASSWORD
+          POSTGRES_DB: $MYSQL_DATABASE
+          MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+          MYSQL_DATABASE: $MYSQL_DATABASE
+          MYSQL_USER: $MYSQL_USER
+          MYSQL_PASSWORD: $MYSQL_PASSWORD
 
 networks: 
   salmon_stats_network:
     external: true
+
