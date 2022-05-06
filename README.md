@@ -26,6 +26,10 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Documentation
+
+[API Documents](https://salmonstats.github.io/api/)
+
 ## Installation
 
 ```bash
