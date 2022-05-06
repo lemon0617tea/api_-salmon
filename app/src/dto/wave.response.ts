@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { EventType, WaterLevel } from '@prisma/client';
+import { EventType, WaterLevel } from './request/results.request';
 
 export class Waves {
   @ApiProperty({ type: 'integer', description: 'ID' })

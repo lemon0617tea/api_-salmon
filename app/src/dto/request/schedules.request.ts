@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   ArrayMaxSize,
   ArrayMinSize,
@@ -10,6 +10,44 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
+import { PaginatedRequestDto } from '../pagination.dto';
+
+export class ScheduleFilterDto extends PaginatedRequestDto {
+  @ApiPropertyOptional({
+    type: 'integer',
+    minimum: 5000,
+    maximum: 5005,
+    description: 'ステージID',
+    nullable: true,
+    default: null,
+  })
+  stage_id: number;
+  @ApiPropertyOptional({
+    description: '支給レアブキ',
+    nullable: true,
+    default: null,
+  })
+  rare_weapon: number;
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(4)
+  @ApiPropertyOptional({ type: [Number], maximum: 4, description: '支給ブキ' })
+  supplied_weapon: number[];
+  @ApiPropertyOptional({
+    type: 'datetime',
+    description: '開始時刻',
+    nullable: true,
+    default: null,
+  })
+  start_time: Date;
+  @ApiPropertyOptional({
+    type: 'datetime',
+    description: '終了時刻',
+    nullable: true,
+    default: null,
+  })
+  end_time: Date;
+}
 
 export class ScheduleRequest {
   @IsInt()

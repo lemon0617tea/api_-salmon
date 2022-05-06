@@ -347,7 +347,7 @@ paths:
                 $ref: '#/components/schemas/Waves'
       tags:
         - ランキング
-  /schedules/{schedule_id}:
+  /schedules/{schedule_id}/stats:
     get:
       operationId: 統計取得
       summary: ''
@@ -368,6 +368,86 @@ paths:
       tags:
         - スケジュール
   /schedules:
+    get:
+      operationId: 取得
+      summary: ''
+      parameters:
+        - name: offset
+          required: true
+          in: query
+          schema:
+            minimum: 0
+            title: ''
+            default: 0
+            type: number
+        - name: limit
+          required: true
+          in: query
+          schema:
+            minimum: 0
+            maximum: 200
+            title: limit
+            default: 25
+            type: number
+        - name: stage_id
+          required: false
+          in: query
+          description: ステージID
+          schema:
+            minimum: 5000
+            maximum: 5005
+            nullable: true
+            default: null
+            type: integer
+        - name: rare_weapon
+          required: false
+          in: query
+          description: 支給レアブキ
+          schema:
+            nullable: true
+            default: null
+            type: number
+        - name: supplied_weapon
+          required: false
+          in: query
+          description: 支給ブキ
+          schema:
+            maximum: 4
+            type: array
+            items:
+              type: number
+        - name: start_time
+          required: false
+          in: query
+          description: 開始時刻
+          schema:
+            nullable: true
+            default: null
+            type: datetime
+        - name: end_time
+          required: false
+          in: query
+          description: 終了時刻
+          schema:
+            nullable: true
+            default: null
+            type: datetime
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                title: PaginatedResponseOfScheduleMetadata
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedDto'
+                  - properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ScheduleMetadata'
+      tags:
+        - スケジュール
     post:
       operationId: 追加
       summary: ''
@@ -398,10 +478,15 @@ components:
         offset:
           type: integer
           description: オフセット
+        results:
+          type: array
+          items:
+            type: string
       required:
         - total
         - limit
         - offset
+        - results
     Metadata:
       type: object
       properties:
@@ -444,8 +529,8 @@ components:
         failure_reason:
           type: string
           enum:
-            - TIMELIMIT
-            - WIPEOUT
+            - time_limit
+            - wipe_out
           nullable: true
           description: 失敗理由
         failure_wave:
@@ -522,12 +607,7 @@ components:
           items:
             type: string
         special_id:
-          type: string
-          enum:
-            - SPLATBOMBLAUNCHER
-            - STINGRAY
-            - INKJET
-            - SPLASHDOWN
+          type: integer
           description: スペシャルID
         special_counts:
           description: スペシャル使用回数
@@ -701,6 +781,7 @@ components:
       properties:
         id:
           type: string
+          example: '5'
         long_name:
           type: string
         name:
@@ -709,19 +790,73 @@ components:
           type: string
       required:
         - id
+    PlayerTypeRequest:
+      type: object
+      properties:
+        species:
+          type: string
+          enum:
+            - inkling
+            - octoling
+          example: inkling
+        style:
+          type: string
+          enum:
+            - girl
+            - boy
+          example: girl
+      required:
+        - species
+        - style
+    PlayerRequest:
+      type: object
+      properties:
+        boss_kill_counts:
+          $ref: '#/components/schemas/BossCounts'
+        dead_count:
+          type: integer
+        golden_ikura_num:
+          type: integer
+        help_count:
+          type: integer
+        ikura_num:
+          type: integer
+        name:
+          type: string
+          example: tkgstrator
+        pid:
+          type: string
+          example: ffffffffffffffff
+        player_type:
+          $ref: '#/components/schemas/PlayerTypeRequest'
+        special_counts:
+          type: array
+          items:
+            type: number
+      required:
+        - boss_kill_counts
+        - dead_count
+        - golden_ikura_num
+        - help_count
+        - ikura_num
+        - name
+        - pid
+        - player_type
+        - special_counts
     EventTypeRequest:
       type: object
       properties:
         key:
           type: string
           enum:
-            - WATERLEVELS
-            - RUSH
-            - GEYSER
-            - GRILLER
-            - RALLY
-            - FOG
-            - MISSILE
+            - water-levels
+            - rush
+            - goldie-seeking
+            - griller
+            - the-mothership
+            - fog
+            - cohock-charge
+          example: water-levels
         name:
           type: string
       required:
@@ -732,9 +867,10 @@ components:
         key:
           type: string
           enum:
-            - LOW
-            - MIDDLE
-            - HIGH
+            - low
+            - normal
+            - high
+          example: normal
         name:
           type: string
       required:
@@ -748,10 +884,13 @@ components:
           type: integer
         golden_ikura_pop_num:
           type: integer
+          example: 100
         ikura_num:
           type: integer
+          example: 2000
         quota_num:
           type: integer
+          example: 25
         water_level:
           $ref: '#/components/schemas/WaterLevelRequest'
       required:
@@ -769,21 +908,34 @@ components:
         grade:
           $ref: '#/components/schemas/GradeRequest'
         danger_rate:
-          type: double
+          type: float
+          example: 200
         end_time:
           type: integer
         grade_point:
           type: integer
+          example: 999
         grade_point_delta:
           type: integer
+          example: 0
         job_id:
           type: integer
+          example: 0
         job_rate:
           type: integer
+          example: 435
         job_score:
           type: integer
+          example: 1000
         kuma_point:
           type: integer
+          example: 1000
+        my_result:
+          $ref: '#/components/schemas/PlayerRequest'
+        other_results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlayerRequest'
         play_time:
           type: integer
         start_time:
@@ -797,6 +949,8 @@ components:
         - grade
         - danger_rate
         - end_time
+        - my_result
+        - other_results
         - play_time
         - start_time
         - wave_details
@@ -821,20 +975,20 @@ components:
         event_type:
           type: string
           enum:
-            - WATERLEVELS
-            - RUSH
-            - GEYSER
-            - GRILLER
-            - RALLY
-            - FOG
-            - MISSILE
+            - water-levels
+            - rush
+            - goldie-seeking
+            - griller
+            - the-mothership
+            - fog
+            - cohock-charge
           description: イベント
         water_level:
           type: string
           enum:
-            - LOW
-            - MIDDLE
-            - HIGH
+            - low
+            - normal
+            - high
           description: 潮位
         golden_ikura_num:
           type: integer
@@ -856,6 +1010,34 @@ components:
         - golden_ikura_pop_num
         - ikura_num
         - quota_num
+    ScheduleMetadata:
+      type: object
+      properties:
+        start_time:
+          type: integer
+        end_time:
+          type: integer
+        rare_weapon:
+          type: integer
+          nullable: true
+        stage_id:
+          type: integer
+          example: 5000
+        weapon_lists:
+          examples:
+            - -2
+            - -2
+            - -2
+            - -2
+          type: array
+          items:
+            type: number
+      required:
+        - start_time
+        - end_time
+        - rare_weapon
+        - stage_id
+        - weapon_lists
     Job:
       type: object
       properties:
@@ -901,7 +1083,7 @@ components:
       type: object
       properties:
         schedule:
-          $ref: '#/components/schemas/Metadata'
+          $ref: '#/components/schemas/ScheduleMetadata'
         my_result:
           description: 統計
           allOf:

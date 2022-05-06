@@ -6,6 +6,7 @@ import {
   ApiResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
+import { ValidateNested } from 'class-validator';
 
 export class ErrorResponse {
   @ApiProperty()
@@ -21,6 +22,8 @@ export class PaginatedDto<T> {
   limit: number;
   @ApiProperty({ type: 'integer', description: 'オフセット' })
   offset: number;
+  @ValidateNested({ each: true })
+  @ApiProperty()
   results: T[];
 }
 

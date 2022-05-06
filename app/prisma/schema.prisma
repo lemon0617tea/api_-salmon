@@ -126,20 +126,20 @@ enum WeaponType {
 }
 
 model Results {
-  salmon_id      Int            @id @default(autoincrement())
+  salmon_id      Int       @id @default(autoincrement())
   bossCounts     Int[]
   bossKillCounts Int[]
   dangerRate     Float
   endTime        Int
   playTime       Int
   startTime      Int
-  failureReason  FailureReason?
+  failureReason  Int?
   failureWave    Int?
   isClear        Boolean
   members        String[] // プレイヤーID一覧
   players        Players[]
   waves          Waves[]
-  schedule       Schedule       @relation(fields: [startTime], references: [startTime])
+  schedule       Schedule  @relation(fields: [startTime], references: [startTime])
 
   @@unique([playTime, members])
 }
@@ -154,7 +154,7 @@ model Schedule {
 }
 
 model Players {
-  id              Int          @id @default(autoincrement())
+  id              Int     @id @default(autoincrement())
   salmon_id       Int
   nsaid           String
   bossKillCounts  Int[]
@@ -166,31 +166,33 @@ model Players {
   jobScore        Int?
   jobRate         Int?
   kumaPoint       Int?
-  gradeId         GradeType?
+  gradeId         Int?
   gradePoint      Int?
   gradePointDelta Int?
   name            String
-  species         Species
-  style           Style
-  specialId       SpecialType
+  species         Int
+  style           Int
+  specialId       Int
   specialCount    Int[]
-  weaponList      WeaponType[]
-  Results         Results      @relation(fields: [salmon_id], references: [salmon_id])
+  weaponList      Int[]
+  results         Results @relation(fields: [salmon_id], references: [salmon_id])
+
+  @@unique([salmon_id, nsaid])
 }
 
 model Waves {
-  id                Int            @id @default(autoincrement())
+  id                Int     @id @default(autoincrement())
   index             Int // WAVE数
   salmon_id         Int // リザルトID
-  eventType         EventType // イベント
-  waterLevel        WaterLevel // 潮位
+  eventType         Int // イベント
+  waterLevel        Int // 潮位
   goldenIkuraNum    Int // 金イクラ数
   goldenIkuraPopNum Int // 金イクラドロップ数
   ikuraNum          Int // 赤イクラ数
   quotaNum          Int // ノルマ数
-  failureReason     FailureReason? // 失敗理由
+  failureReason     Int? // 失敗理由
   isClear           Boolean // クリアしたか
-  Results           Results        @relation(fields: [salmon_id], references: [salmon_id])
+  results           Results @relation(fields: [salmon_id], references: [salmon_id])
 }
 
 model Users {

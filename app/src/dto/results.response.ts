@@ -1,5 +1,4 @@
 import { ApiProperty, ApiResponse } from '@nestjs/swagger';
-import { FailureReason, SpecialType } from '@prisma/client';
 import { IsBoolean, IsEnum, IsIn, IsInt, Max, Min } from 'class-validator';
 
 export namespace Results {
@@ -12,6 +11,11 @@ export namespace Results {
     end_time: number;
     @ApiProperty({ type: 'integer', description: '支給ブキ' })
     weapon_lists: number[];
+  }
+
+  enum FailureReason {
+    TIMELIMIT = 'time_limit',
+    WIPEOUT = 'wipe_out',
   }
 
   export class JobResult {
@@ -79,8 +83,8 @@ export namespace Results {
     boss_kill_counts: number[];
     @ApiProperty({ description: '支給ブキ' })
     weapon_lists: number[];
-    @ApiProperty({ enum: SpecialType, description: 'スペシャルID' })
-    special_id: SpecialType;
+    @ApiProperty({ type: 'integer', description: 'スペシャルID' })
+    special_id: number;
     @ApiProperty({
       type: [Number],
       description: 'スペシャル使用回数',

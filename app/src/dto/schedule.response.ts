@@ -6,17 +6,31 @@ export class CountedDto<T> {
   count: number;
 }
 
+export class PaginatedResponseDto<T> {
+  @ApiProperty({ type: 'integer' })
+  total: number;
+  @ApiProperty({ type: 'integer' })
+  limit: number;
+  @ApiProperty({ type: 'integer' })
+  offset: number;
+  results: T[];
+}
+
 export namespace Schedule {
-  class Metadata {
+  export class ScheduleMetadata {
     @ApiProperty({ type: 'integer' })
     start_time: number;
     @ApiProperty({ type: 'integer' })
     end_time: number;
-    @ApiProperty({ type: 'integer' })
+    @ApiProperty({ type: 'integer', nullable: true })
+    rare_weapon: number;
+    @ApiProperty({ type: 'integer', example: 5000 })
     stage_id: number;
-    @ApiProperty()
+    @ApiProperty({ type: [Number], examples: [-2, -2, -2, -2] })
     weapon_lists: number[];
   }
+
+  export class PaginatedResponse extends PaginatedResponseDto<ScheduleMetadata> {}
 
   export class Job {
     @ApiProperty({ type: 'integer', description: 'クリア回数' })
@@ -40,7 +54,7 @@ export namespace Schedule {
 
   export class Stats {
     @ApiProperty()
-    schedule: Metadata;
+    schedule: ScheduleMetadata;
     @ApiProperty({ description: '統計' })
     my_result: Result;
     @ApiProperty({ description: '全国統計' })
