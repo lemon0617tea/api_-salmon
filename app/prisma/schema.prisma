@@ -170,8 +170,8 @@ model Players {
   gradePoint      Int?
   gradePointDelta Int?
   name            String
-  species         Int
-  style           Int
+  species         String
+  style           String
   specialId       Int
   specialCount    Int[]
   weaponList      Int[]

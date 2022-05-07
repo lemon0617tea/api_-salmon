@@ -12,7 +12,9 @@ import {
   IsString,
   Length,
   Max,
+  MaxLength,
   Min,
+  MinLength,
   ValidateNested,
 } from 'class-validator';
 import { ResourceLimits } from 'worker_threads';
@@ -252,15 +254,21 @@ export class PlayerRequest {
   @ApiProperty()
   @ValidateNested()
   player_type: PlayerTypeRequest;
+  @ApiProperty()
   @ValidateNested()
   special: SpecialRequest;
   @ApiProperty({ type: [Number] })
   @IsArray()
+  @MaxLength(3)
+  @MinLength(0)
   @ValidateNested({ each: true })
   special_counts: number[];
+  @ApiProperty({ type: [WeaponRequest] })
   @IsArray()
+  @MaxLength(3)
+  @MinLength(0)
   @ValidateNested({ each: true })
-  weapon_list: WeaponRequest[];
+  weapon_lists: WeaponRequest[];
 }
 
 export class ResultRequest {
@@ -298,6 +306,7 @@ export class ResultRequest {
   @Min(0)
   job_rate: number;
   @ValidateNested()
+  @ApiProperty()
   job_result: Results.JobResult;
   @ApiPropertyOptional({ type: 'integer', example: 1000 })
   @IsInt()

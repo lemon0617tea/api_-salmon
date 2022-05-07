@@ -24,15 +24,21 @@ export namespace Results {
       enum: FailureReason,
       nullable: true,
       description: '失敗理由',
+      example: null,
     })
     @IsInt()
     @Max(2)
     @Min(0)
     failure_reason: FailureReason;
-    @ApiProperty({ type: 'integer', nullable: true, description: '失敗WAVE' })
+    @ApiProperty({
+      type: 'integer',
+      nullable: true,
+      description: '失敗WAVE',
+      example: null,
+    })
     failure_wave: number;
     @IsBoolean()
-    @ApiProperty({ description: 'クリアしたか' })
+    @ApiProperty({ description: 'クリアしたか', example: true })
     is_clear: Boolean;
   }
 
@@ -118,7 +124,7 @@ export namespace Results {
     play_time: number;
     @ApiProperty({ description: 'シフト' })
     schedule: Schedule;
-    @ApiProperty({ description: 'リザルト' })
+    @ApiProperty({ type: JobResult, description: 'リザルト' })
     job_results: JobResult;
     @ApiProperty({ type: [Player], description: 'プレイヤー記録' })
     player_results: Player[];

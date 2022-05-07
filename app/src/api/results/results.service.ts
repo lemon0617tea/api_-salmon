@@ -13,24 +13,69 @@ import { PrismaService } from 'src/prisma.service';
 export class ResultsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  createOthers(
+    request: ResultRequest,
+  ): Prisma.PlayersCreateWithoutResultsInput[] {
+    return request.other_results.map((x) => {
+      console.log(x);
+      return {
+        nsaid: x.pid,
+        deadCount: x.dead_count,
+        goldenIkuraNum: x.golden_ikura_num,
+        helpCount: x.help_count,
+        ikuraNum: x.help_count,
+        jobId: null,
+        jobScore: null,
+        jobRate: null,
+        kumaPoint: null,
+        gradeId: null,
+        gradePoint: null,
+        gradePointDelta: null,
+        name: x.name,
+        species: x.player_type.species,
+        style: x.player_type.style,
+        specialId: Number(x.special.id),
+        specialCount: x.special_counts,
+        weaponList: x.weapon_lists.map((x) => {
+          return Number(x.id);
+        }),
+      };
+    });
+  }
+
   createPlayers(
-    request: PlayerRequest[],
+    request: ResultRequest,
   ): Prisma.PlayersCreateWithoutResultsInput {
-    const players = request
-      .sort((x, y) => (x.pid < y.pid ? 1 : 0))
-      .map((x) => {
-        return x.pid;
-      });
-    console.log(players);
-    return;
+    return {
+      nsaid: request.my_result.pid,
+      deadCount: request.my_result.dead_count,
+      goldenIkuraNum: request.my_result.golden_ikura_num,
+      helpCount: request.my_result.help_count,
+      ikuraNum: request.my_result.help_count,
+      jobId: request.job_id,
+      jobScore: request.job_score,
+      jobRate: request.job_rate,
+      kumaPoint: request.kuma_point,
+      gradeId: Number(request.grade.id),
+      gradePoint: request.grade_point,
+      gradePointDelta: request.grade_point_delta,
+      name: request.my_result.name,
+      species: request.my_result.player_type.species,
+      style: request.my_result.player_type.style,
+      specialId: Number(request.my_result.special.id),
+      specialCount: request.my_result.special_counts,
+      weaponList: request.my_result.weapon_lists.map((x) => {
+        return Number(x.id);
+      }),
+    };
   }
 
   createWaves(
     request: ResultRequest,
     failureWave: Number,
   ): Prisma.WavesCreateWithoutResultsInput[] {
-    const waves = request.wave_details.map((x, index) => {
-      const wave: Prisma.WavesCreateWithoutResultsInput = {
+    return request.wave_details.map((x, index) => {
+      return {
         eventType: Object.keys(EventType).indexOf(x.event_type.key),
         waterLevel: Object.keys(WaterLevel).indexOf(x.water_level.key),
         goldenIkuraNum: x.golden_ikura_num,
@@ -40,14 +85,18 @@ export class ResultsService {
         index: index,
         isClear: failureWave === index ? true : false,
       };
-      return wave;
     });
-    return waves;
   }
 
   createResults(request: ResultRequest): Prisma.ResultsCreateInput {
-    this.createWaves(request, request.job_result.failure_wave);
-    this.createPlayers(request.other_results.concat(request.my_result));
+    const players: Prisma.PlayersCreateWithoutResultsInput[] =
+      this.createOthers(request)
+        .concat(this.createPlayers(request))
+        .sort((x, y) => (x.nsaid < y.nsaid ? 1 : 0));
+    const waves: Prisma.WavesCreateWithoutResultsInput[] = this.createWaves(
+      request,
+      request.job_result.failure_wave,
+    );
     return;
   }
 

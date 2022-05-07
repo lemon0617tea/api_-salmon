@@ -535,13 +535,16 @@ components:
             - wipe_out
           nullable: true
           description: 失敗理由
+          example: null
         failure_wave:
           type: integer
           nullable: true
           description: 失敗WAVE
+          example: null
         is_clear:
           type: boolean
           description: クリアしたか
+          example: true
       required:
         - failure_reason
         - failure_wave
@@ -810,6 +813,51 @@ components:
       required:
         - species
         - style
+    SpecialRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '2'
+        image_a:
+          type: string
+        image_b:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - image_a
+        - image_b
+        - name
+    Weapon:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '20000'
+        image:
+          type: string
+        name:
+          type: string
+        thumbnail:
+          type: string
+      required:
+        - id
+        - image
+        - name
+        - thumbnail
+    WeaponRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '20000'
+        weapon:
+          $ref: '#/components/schemas/Weapon'
+      required:
+        - id
+        - weapon
     PlayerRequest:
       type: object
       properties:
@@ -831,10 +879,16 @@ components:
           example: ffffffffffffffff
         player_type:
           $ref: '#/components/schemas/PlayerTypeRequest'
+        special:
+          $ref: '#/components/schemas/SpecialRequest'
         special_counts:
           type: array
           items:
             type: number
+        weapon_lists:
+          type: array
+          items:
+            $ref: '#/components/schemas/WeaponRequest'
       required:
         - boss_kill_counts
         - dead_count
@@ -844,7 +898,9 @@ components:
         - name
         - pid
         - player_type
+        - special
         - special_counts
+        - weapon_lists
     EventTypeRequest:
       type: object
       properties:
@@ -926,6 +982,8 @@ components:
         job_rate:
           type: integer
           example: 435
+        job_result:
+          $ref: '#/components/schemas/JobResult'
         job_score:
           type: integer
           example: 1000
@@ -951,6 +1009,7 @@ components:
         - grade
         - danger_rate
         - end_time
+        - job_result
         - my_result
         - other_results
         - play_time
