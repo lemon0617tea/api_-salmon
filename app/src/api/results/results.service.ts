@@ -86,8 +86,8 @@ export class ResultsService {
   ): Prisma.WavesCreateWithoutResultsInput[] {
     return request.wave_details.map((x, index) => {
       return {
-        eventType: Object.keys(EventType).indexOf(x.event_type.key),
-        waterLevel: Object.keys(WaterLevel).indexOf(x.water_level.key),
+        eventType: Object.values(EventType).indexOf(x.event_type.key),
+        waterLevel: Object.values(WaterLevel).indexOf(x.water_level.key),
         goldenIkuraNum: x.golden_ikura_num,
         goldenIkuraPopNum: x.golden_ikura_pop_num,
         ikuraNum: x.ikura_num,
