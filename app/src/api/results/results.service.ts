@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, Schedule } from '@prisma/client';
 import {
+  BossCounts,
   EventType,
   PlayerRequest,
   ResultRequest,
   ResultRequestBody,
+  StageURL,
   WaterLevel,
 } from 'src/dto/request/results.request';
 import { PrismaService } from 'src/prisma.service';
+import { transpose } from 'matrix-transpose';
 
 @Injectable()
 export class ResultsService {
@@ -17,9 +20,9 @@ export class ResultsService {
     request: ResultRequest,
   ): Prisma.PlayersCreateWithoutResultsInput[] {
     return request.other_results.map((x) => {
-      console.log(x);
       return {
         nsaid: x.pid,
+        bossKillCounts: this.bossKillCounts(x.boss_kill_counts),
         deadCount: x.dead_count,
         goldenIkuraNum: x.golden_ikura_num,
         helpCount: x.help_count,
@@ -36,10 +39,16 @@ export class ResultsService {
         style: x.player_type.style,
         specialId: Number(x.special.id),
         specialCount: x.special_counts,
-        weaponList: x.weapon_lists.map((x) => {
+        weaponList: x.weapon_list.map((x) => {
           return Number(x.id);
         }),
       };
+    });
+  }
+
+  bossKillCounts(request: BossCounts): number[] {
+    return Object.values(request).map((x) => {
+      return x.count;
     });
   }
 
@@ -48,6 +57,7 @@ export class ResultsService {
   ): Prisma.PlayersCreateWithoutResultsInput {
     return {
       nsaid: request.my_result.pid,
+      bossKillCounts: this.bossKillCounts(request.my_result.boss_kill_counts),
       deadCount: request.my_result.dead_count,
       goldenIkuraNum: request.my_result.golden_ikura_num,
       helpCount: request.my_result.help_count,
@@ -64,7 +74,7 @@ export class ResultsService {
       style: request.my_result.player_type.style,
       specialId: Number(request.my_result.special.id),
       specialCount: request.my_result.special_counts,
-      weaponList: request.my_result.weapon_lists.map((x) => {
+      weaponList: request.my_result.weapon_list.map((x) => {
         return Number(x.id);
       }),
     };
@@ -97,11 +107,59 @@ export class ResultsService {
       request,
       request.job_result.failure_wave,
     );
-    return;
+    const boss_kill_counts = transpose(
+      request.other_results
+        .map((x) => {
+          return x.boss_kill_counts;
+        })
+        .concat(request.my_result.boss_kill_counts)
+        .map((x) => {
+          return this.bossKillCounts(x);
+        }),
+    ).map((x) => {
+      return x.reduce((a, b) => a + b, 0);
+    });
+    const members: string[] = players.map((x) => x.nsaid);
+    return {
+      bossCounts: this.bossKillCounts(request.boss_counts),
+      bossKillCounts: boss_kill_counts,
+      dangerRate: request.danger_rate,
+      endTime: request.end_time,
+      members: members,
+      playTime: request.play_time,
+      startTime: request.start_time,
+      isClear: request.job_result.is_clear.valueOf(),
+      failureReason:
+        request.job_result.failure_reason == null
+          ? null
+          : request.job_result.failure_reason.valueOf(),
+      failureWave: request.job_result.failure_wave,
+      stageId:
+        Object.values(StageURL).indexOf(request.schedule.stage.image) + 5000,
+      weaponLists: request.schedule.weapons.map((x) => {
+        return Number(x.id);
+      }),
+      // waves: {
+      //   createMany: {
+      //     data: waves,
+      //   },
+      // },
+    };
   }
 
   async create(request: ResultRequestBody) {
-    request.results.map((x) => this.createResults(x));
+    const results: Prisma.ResultsCreateInput[] = request.results.map((x) =>
+      this.createResults(x),
+    );
+    this.prisma.results
+      .createMany({
+        data: results,
+        skipDuplicates: true,
+      })
+      .catch(console.error)
+      .finally(() => {
+        console.log('done');
+      });
     return;
   }
 }

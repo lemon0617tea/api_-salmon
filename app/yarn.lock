@@ -3579,6 +3579,11 @@ makeerror@1.0.12:
   dependencies:
     tmpl "1.0.5"
 
+matrix-transpose@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/matrix-transpose/-/matrix-transpose-1.0.2.tgz#4672a7522f6547ec2f8a9848d22f31d42daa6b98"
+  integrity sha512-Gy3irmkXbS3vR9RGLewUwSRb2LEGD15d65YI0JKqm4Ei1yC1ATu5CS1zp/W43Dut3637NZJVrCg33OvJxp0bsw==
+
 media-typer@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"

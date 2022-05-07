@@ -133,24 +133,25 @@ model Results {
   endTime        Int
   playTime       Int
   startTime      Int
-  failureReason  Int?
+  stageId        Int
+  rareWeapon     Int?
+  weaponLists    Int[]
+  failureReason  String?
   failureWave    Int?
   isClear        Boolean
   members        String[] // プレイヤーID一覧
   players        Players[]
   waves          Waves[]
-  schedule       Schedule  @relation(fields: [startTime], references: [startTime])
 
   @@unique([playTime, members])
 }
 
 model Schedule {
-  startTime   Int       @id
+  startTime   Int   @id
   stageId     Int
   endTime     Int
   rareWeapon  Int?
   weaponLists Int[]
-  Results     Results[]
 }
 
 model Players {
@@ -190,7 +191,7 @@ model Waves {
   goldenIkuraPopNum Int // 金イクラドロップ数
   ikuraNum          Int // 赤イクラ数
   quotaNum          Int // ノルマ数
-  failureReason     Int? // 失敗理由
+  failureReason     String? // 失敗理由
   isClear           Boolean // クリアしたか
   results           Results @relation(fields: [salmon_id], references: [salmon_id])
 }

@@ -51,7 +51,7 @@ class BossCount<T> {
   count: number;
 }
 
-class BossCounts {
+export class BossCounts {
   @ApiProperty()
   @ValidateNested()
   '3': BossCount<BossType.GOLDEN>;
@@ -121,10 +121,12 @@ export class WaveRequest {
   event_type: EventTypeRequest;
   @ApiProperty({ type: 'integer' })
   @IsInt()
+  @Max(150)
   @Min(0)
   golden_ikura_num: number;
   @ApiProperty({ type: 'integer', example: 100 })
   @IsInt()
+  @Max(150)
   @Min(0)
   golden_ikura_pop_num: number;
   @ApiProperty({ type: 'integer', example: 2000 })
@@ -136,7 +138,6 @@ export class WaveRequest {
   @Min(25)
   @Min(0)
   quota_num: number;
-  @IsArray()
   @ApiProperty()
   @ValidateNested()
   water_level: WaterLevelRequest;
@@ -157,7 +158,20 @@ class GradeRequest {
   short_name: string;
 }
 
-class StageRequest {}
+export enum StageURL {
+  SHAKEUP = '/images/coop_stage/65c68c6f0641cc5654434b78a6f10b0ad32ccdee.png',
+  SHAKESHIP = '/images/coop_stage/e07d73b7d9f0c64e552b34a2e6c29b8564c63388.png',
+  SHAKEHOUSE = '/images/coop_stage/6d68f5baa75f3a94e5e9bfb89b82e7377e3ecd2c.png',
+  SHAKELIFT = '/images/coop_stage/e9f7c7b35e6d46778cd3cbc0d89bd7e1bc3be493.png',
+  SHAKELIDE = '/images/coop_stage/50064ec6e97aac91e70df5fc2cfecf61ad8615fd.png',
+}
+
+class StageRequest {
+  @ApiProperty({ enum: StageURL, example: StageURL.SHAKEUP })
+  image: StageURL;
+  @ApiProperty()
+  name: string;
+}
 
 class Weapon {
   @ApiProperty({ example: '20000' })
@@ -184,10 +198,14 @@ class WeaponRequest {
 }
 
 class ScheduleRequest {
-  //   end_time: number;
-  //   stage: StageRequest;
-  //   start_time: number;
-  //   weapons: WeaponRequest[];
+  @ApiProperty({ type: 'integer', example: 0 })
+  end_time: number;
+  @ApiProperty({ type: 'integer', example: 0 })
+  stage: StageRequest;
+  @ApiProperty({ type: 'integer', example: 0 })
+  start_time: number;
+  @ApiProperty()
+  weapons: WeaponRequest[];
 }
 
 enum Species {
@@ -268,7 +286,7 @@ export class PlayerRequest {
   @MaxLength(3)
   @MinLength(0)
   @ValidateNested({ each: true })
-  weapon_lists: WeaponRequest[];
+  weapon_list: WeaponRequest[];
 }
 
 export class ResultRequest {
@@ -333,6 +351,8 @@ export class ResultRequest {
   @ApiProperty({ type: [WaveRequest] })
   @ValidateNested({ each: true })
   wave_details: WaveRequest[];
+  @ApiProperty()
+  schedule: ScheduleRequest;
 }
 
 export class ResultRequestBody {
