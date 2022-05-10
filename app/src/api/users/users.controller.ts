@@ -20,8 +20,6 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { prisma, Prisma, SplatNet2, Users } from '@prisma/client';
-import { Expose, Transform } from 'class-transformer';
 import { IsIn, IsInt, IsString, Length } from 'class-validator';
 import { ApiPaginatedResponse, PaginatedDto } from 'src/dto/pagination.dto';
 import { User } from 'src/dto/users.response';
@@ -41,29 +39,20 @@ export class UsersController {
   @ApiOperation({ operationId: '作成' })
   @ApiResponse({ status: HttpStatus.CREATED })
   @ApiQuery({ name: 'uid', type: 'string' })
-  create(@Query() data: Prisma.UsersCreateInput) {
-    return this.service
-      .create(data)
-      .catch(console.error)
-      .finally(() => {});
-  }
+  create() {}
 
   @Get(':nsaid')
   @ApiParam({ name: 'nsaid', type: 'string', description: 'アカウントID' })
   @ApiTags('ユーザー')
   @ApiOperation({ operationId: '取得' })
   @ApiOkResponse({ type: User.Metadata })
-  find(@Param() request: Prisma.UsersWhereUniqueInput): Promise<Users> {
-    return this.service.find(request);
-  }
+  find() {}
 
   @Get('')
   @ApiTags('ユーザー')
   @ApiOperation({ operationId: '一覧取得' })
   @ApiPaginatedResponse(User.Metadata)
-  findAll(): Promise<Users[]> {
-    return this.service.findAll();
-  }
+  findMany() {}
 
   // @Post('')
   // @ApiTags('アカウント')

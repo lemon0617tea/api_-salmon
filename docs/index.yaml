@@ -885,7 +885,7 @@ components:
           type: array
           items:
             type: number
-        weapon_lists:
+        weapon_list:
           type: array
           items:
             $ref: '#/components/schemas/WeaponRequest'
@@ -900,7 +900,7 @@ components:
         - player_type
         - special
         - special_counts
-        - weapon_lists
+        - weapon_list
     EventTypeRequest:
       type: object
       properties:
@@ -958,6 +958,27 @@ components:
         - ikura_num
         - quota_num
         - water_level
+    ScheduleRequest:
+      type: object
+      properties:
+        end_time:
+          type: integer
+          example: 0
+        stage:
+          type: integer
+          example: 0
+        start_time:
+          type: integer
+          example: 0
+        weapons:
+          type: array
+          items:
+            type: string
+      required:
+        - end_time
+        - stage
+        - start_time
+        - weapons
     ResultRequest:
       type: object
       properties:
@@ -1004,6 +1025,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/WaveRequest'
+        schedule:
+          $ref: '#/components/schemas/ScheduleRequest'
       required:
         - boss_counts
         - grade
@@ -1015,6 +1038,7 @@ components:
         - play_time
         - start_time
         - wave_details
+        - schedule
     ResultRequestBody:
       type: object
       properties:

@@ -67,9 +67,7 @@ export class ResultsController {
   @Post('')
   @ApiTags('リザルト')
   @ApiOperation({ operationId: '登録' })
-  create(@Body() request: ResultRequestBody) {
-    this.service.create(request);
-  }
+  create(@Body() request: ResultRequestBody) {}
 
   @Put(':salmon_id')
   @ApiParam({ name: 'salmon_id', type: 'integer', description: 'リザルトID' })

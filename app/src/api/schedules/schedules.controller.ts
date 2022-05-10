@@ -37,7 +37,7 @@ export class SchedulesController {
   findMany(
     @Query() request: ScheduleFilterDto,
   ): Promise<PaginatedResponseDto<Schedule.ScheduleMetadata>> {
-    return this.service.findMany(request);
+    return;
   }
 
   @Post()
