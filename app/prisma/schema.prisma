@@ -72,7 +72,7 @@ model Player {
 
 model Wave {
   id                Int     @id @default(autoincrement())
-  index             Int // WAVE数
+  waveId            Int     @map("wave_id") // WAVE数
   salmonId          Int     @map("salmon_id") // リザルトID
   eventType         Int     @map("event_type") // イベント
   waterLevel        Int     @map("water_level") // 潮位
@@ -84,6 +84,7 @@ model Wave {
   isClear           Boolean @map("is_clear") // クリアしたか
   result            Result? @relation(fields: [salmonId], references: [salmonId])
 
+  @@unique([waveId, salmonId])
   @@map("waves")
 }
 
