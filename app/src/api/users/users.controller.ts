@@ -1,37 +1,42 @@
+import { User as UserModel } from '.prisma/client';
 import {
-  Body,
   Controller,
   Delete,
   Get,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
-  Req,
 } from '@nestjs/common';
 import {
-  ApiExtraModels,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiProperty,
   ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { IsIn, IsInt, IsString, Length } from 'class-validator';
-import { ApiPaginatedResponse, PaginatedDto } from 'src/dto/pagination.dto';
+import { PaginatedRequestDto } from 'src/dto/pagination.dto';
 import { UsersService } from './users.service';
-
-class FindRequest {
-  @Length(16, 16)
-  nsaid: string;
-}
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly service: UsersService) {}
+
+  @Get('')
+  @ApiTags('ユーザー')
+  @ApiOperation({
+    operationId: '一覧取得',
+    description: '登録順にユーザ情報を取得します',
+  })
+  @ApiOkResponse()
+  findMany(@Query() request: PaginatedRequestDto): Promise<UserModel[]> {
+    return this.service.findMany(request.offset, request.limit);
+  }
 
   @Post('')
   @ApiTags('ユーザー')
@@ -41,15 +46,16 @@ export class UsersController {
   create() {}
 
   @Get(':nsaid')
-  @ApiParam({ name: 'nsaid', type: 'string', description: 'アカウントID' })
   @ApiTags('ユーザー')
-  @ApiOperation({ operationId: '取得' })
-  find() {}
-
-  @Get('')
-  @ApiTags('ユーザー')
-  @ApiOperation({ operationId: '一覧取得' })
-  findMany() {}
+  @ApiOperation({
+    operationId: '取得',
+    description: '指定されたIDのユーザを取得します',
+  })
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  find(@Param('nsaid', ParseIntPipe) nsaid: number): Promise<UserModel> {
+    return this.service.find(nsaid);
+  }
 
   // @Post('')
   // @ApiTags('アカウント')

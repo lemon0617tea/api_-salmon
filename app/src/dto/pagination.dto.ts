@@ -5,20 +5,14 @@
  */
 
 import { applyDecorators, Type } from '@nestjs/common';
-import {
-  ApiOkResponse,
-  ApiProperty,
-  ApiPropertyOptional,
-  getSchemaPath,
-} from '@nestjs/swagger';
+import { ApiOkResponse, ApiProperty, getSchemaPath } from '@nestjs/swagger';
 import { Expose, Transform } from 'class-transformer';
-import { IsInt, IsOptional, Max, Min } from 'class-validator';
 
 export class PaginatedRequestDto {
   @Expose()
   @Transform((params) => parseInt(params.value, 10))
   @ApiProperty({
-    title: '',
+    title: 'offset',
     minimum: 0,
     default: 0,
   })

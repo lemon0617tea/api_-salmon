@@ -1,6 +1,33 @@
 openapi: 3.0.0
 paths:
   /v1/users:
+    get:
+      operationId: 一覧取得
+      summary: ''
+      description: 登録順にユーザ情報を取得します
+      parameters:
+        - name: offset
+          required: true
+          in: query
+          schema:
+            minimum: 0
+            title: offset
+            default: 0
+            type: number
+        - name: limit
+          required: true
+          in: query
+          schema:
+            minimum: 0
+            maximum: 200
+            title: limit
+            default: 25
+            type: number
+      responses:
+        '200':
+          description: ''
+      tags:
+        - ユーザー
     post:
       operationId: 作成
       summary: ''
@@ -15,28 +42,21 @@ paths:
           description: ''
       tags:
         - ユーザー
-    get:
-      operationId: 一覧取得
-      summary: ''
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags:
-        - ユーザー
   /v1/users/{nsaid}:
     get:
       operationId: 取得
       summary: ''
+      description: 指定されたIDのユーザを取得します
       parameters:
         - name: nsaid
           required: true
           in: path
-          description: アカウントID
           schema:
-            type: string
+            type: number
       responses:
         '200':
+          description: ''
+        '404':
           description: ''
       tags:
         - ユーザー
@@ -126,7 +146,7 @@ paths:
           in: query
           schema:
             minimum: 0
-            title: ''
+            title: offset
             default: 0
             type: number
         - name: limit
@@ -170,7 +190,7 @@ paths:
           in: query
           schema:
             minimum: 0
-            title: ''
+            title: offset
             default: 0
             type: number
         - name: limit
@@ -211,7 +231,7 @@ paths:
           in: query
           schema:
             minimum: 0
-            title: ''
+            title: offset
             default: 0
             type: number
         - name: limit
