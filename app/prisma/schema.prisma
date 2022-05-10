@@ -26,6 +26,8 @@ model Result {
   players        Player[]
   waves          Wave[]
   schedule       Schedule @relation(fields: [startTime], references: [startTime])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt()
 
   @@unique([playTime, members])
   @@map("results")
@@ -89,12 +91,14 @@ model Wave {
 }
 
 model User {
-  id           Int     @id @default(autoincrement())
-  uid          String  @unique // SplatNet2 ID
+  id           Int      @id @default(autoincrement())
+  uid          String   @unique // SplatNet2 ID
   username     String? // ユーザ名
   mail         String? // メールアドレス
   password     String? // パスワード
-  thumbnailURL String? @map("thumbnail_url") // 表示される画像
+  thumbnailURL String?  @map("thumbnail_url") // 表示される画像
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt()
 
   @@map("users")
 }

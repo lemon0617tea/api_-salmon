@@ -22,7 +22,6 @@ import {
 } from '@nestjs/swagger';
 import { IsIn, IsInt, IsString, Length } from 'class-validator';
 import { ApiPaginatedResponse, PaginatedDto } from 'src/dto/pagination.dto';
-import { User } from 'src/dto/users.response';
 import { UsersService } from './users.service';
 
 class FindRequest {
@@ -45,13 +44,11 @@ export class UsersController {
   @ApiParam({ name: 'nsaid', type: 'string', description: 'アカウントID' })
   @ApiTags('ユーザー')
   @ApiOperation({ operationId: '取得' })
-  @ApiOkResponse({ type: User.Metadata })
   find() {}
 
   @Get('')
   @ApiTags('ユーザー')
   @ApiOperation({ operationId: '一覧取得' })
-  @ApiPaginatedResponse(User.Metadata)
   findMany() {}
 
   // @Post('')
@@ -66,13 +63,11 @@ export class UsersController {
   @ApiParam({ name: 'nsaid', type: 'string', description: 'ユーザーID' })
   @ApiTags('ユーザー')
   @ApiOperation({ operationId: '更新' })
-  @ApiOkResponse({ type: User.Metadata })
   update() {}
 
   @Delete(':nsaid')
   @ApiParam({ name: 'nsaid', type: 'string', description: 'ユーザーID' })
   @ApiTags('ユーザー')
   @ApiOperation({ operationId: '削除' })
-  @ApiOkResponse({ type: User.Metadata })
   delete() {}
 }

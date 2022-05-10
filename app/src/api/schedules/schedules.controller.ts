@@ -11,12 +11,6 @@ import {
   ApiPaginatedResponse,
   PaginatedRequestDto,
 } from 'src/dto/pagination.dto';
-import {
-  ScheduleFilterDto,
-  ScheduleRequest,
-  ScheduleRequestBody,
-} from 'src/dto/request/schedules.request';
-import { PaginatedResponseDto, Schedule } from 'src/dto/schedule.response';
 import { SchedulesService } from './schedules.service';
 
 @Controller('schedules')
@@ -27,18 +21,12 @@ export class SchedulesController {
   @ApiParam({ name: 'schedule_id', type: 'integer', description: 'シフトID' })
   @ApiTags('スケジュール')
   @ApiOperation({ operationId: '統計取得' })
-  @ApiOkResponse({ type: Schedule.Stats })
   find_stats() {}
 
   @Get('')
   @ApiTags('スケジュール')
   @ApiOperation({ operationId: '取得' })
-  @ApiPaginatedResponse(Schedule.ScheduleMetadata)
-  findMany(
-    @Query() request: ScheduleFilterDto,
-  ): Promise<PaginatedResponseDto<Schedule.ScheduleMetadata>> {
-    return;
-  }
+  findMany() {}
 
   @Post()
   @ApiTags('スケジュール')
