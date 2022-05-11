@@ -14,7 +14,7 @@ export class ParseOptionalUnsignedIntPipe extends ParseOptionalIntPipe {
     const intValue = await super.transform(value, metadata);
     if (intValue < 0) {
       throw this.exceptionFactory(
-        'Validation failed (unsigned value is expected)',
+        `Validation failed (${metadata.data} is expected unsigned integer)`,
       );
     }
     return intValue;

@@ -26,9 +26,6 @@ export class ResultsService {
 
   async findMany(query: PaginatedRequestDtoForResult): Promise<ResultModel[]> {
     return this.prisma.result.findMany({
-      where: {
-        isClear: Boolean(query.is_clear) || undefined,
-      },
       take: Number(query.limit),
       skip: Number(query.offset),
     });

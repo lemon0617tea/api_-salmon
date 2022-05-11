@@ -13,7 +13,7 @@ async function bootstrap() {
     type: VersioningType.URI,
     defaultVersion: '1',
   });
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  app.useGlobalPipes(new ValidationPipe());
   const build = path.resolve(process.cwd(), '../docs');
   const options = new DocumentBuilder()
     .setTitle('Salmon Stats API Documents')

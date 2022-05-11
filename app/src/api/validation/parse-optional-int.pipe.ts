@@ -10,6 +10,7 @@ import {
   ErrorHttpStatusCode,
   HttpErrorByCode,
 } from '@nestjs/common/utils/http-error-by-code.util';
+import { isEmpty } from 'class-validator';
 
 export interface ParseOptionalIntPipeOptions {
   errorHttpStatusCode?: ErrorHttpStatusCode;
@@ -28,15 +29,11 @@ export interface ParseOptionalIntPipeOptions {
 @Injectable()
 export class ParseOptionalIntPipe implements PipeTransform<string> {
   protected exceptionFactory: (error: string) => any;
-  protected required?: boolean;
-  protected default?: number;
 
   constructor(@Optional() options?: ParseOptionalIntPipeOptions) {
     options = options || {};
     const { exceptionFactory, errorHttpStatusCode = HttpStatus.BAD_REQUEST } =
       options;
-    this.required = options.required ?? true;
-    this.default = options.default;
     this.exceptionFactory =
       exceptionFactory ||
       ((error) => new HttpErrorByCode[errorHttpStatusCode](error));
@@ -55,17 +52,11 @@ export class ParseOptionalIntPipe implements PipeTransform<string> {
       /^-?\d+$/.test(value) &&
       isFinite(value as any);
     if (!isNumeric) {
-      console.log(this.required, this.default, value);
-      if (!this.required) {
-        return this.default || undefined;
-      }
-      if (isNaN(Number(value))) {
-        throw this.exceptionFactory(
-          `Validation failed (${metadata.data} is required)`,
-        );
+      if (value === undefined) {
+        return undefined;
       }
       throw this.exceptionFactory(
-        'Validation failed (numeric string is expected)',
+        `Validation failed (${metadata.data} is expected numeric string)`,
       );
     }
     return parseInt(value, 10);
