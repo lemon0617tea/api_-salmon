@@ -1,16 +1,5 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import {
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { ValidateNested } from 'class-validator';
-import {
-  ApiPaginatedResponse,
-  PaginatedRequestDto,
-} from 'src/dto/pagination.dto';
+import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { SchedulesService } from './schedules.service';
 
 @Controller('schedules')
@@ -21,11 +10,14 @@ export class SchedulesController {
   @ApiParam({ name: 'schedule_id', type: 'integer', description: 'シフトID' })
   @ApiTags('スケジュール')
   @ApiOperation({ operationId: '統計取得' })
-  find_stats() {}
+  findStats() {}
 
   @Get('')
   @ApiTags('スケジュール')
-  @ApiOperation({ operationId: '取得' })
+  @ApiOperation({
+    operationId: '取得',
+    description: 'スケジュールを取得します',
+  })
   findMany() {}
 
   @Post()

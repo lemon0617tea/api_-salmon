@@ -1,29 +1,27 @@
+import { Prisma, Result as ResultModel } from '.prisma/client';
 import {
-  Body,
   Controller,
   Delete,
   Get,
-  HttpCode,
-  HttpException,
-  HttpStatus,
+  Param,
+  ParseBoolPipe,
+  ParseIntPipe,
   Post,
   Put,
   Query,
-  Req,
 } from '@nestjs/common';
 import {
-  ApiBody,
-  ApiExtension,
   ApiExtraModels,
   ApiNotFoundResponse,
   ApiOperation,
   ApiParam,
-  ApiResponse,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import {
   ApiPaginatedResponse,
   PaginatedDto,
+  PaginatedRequestDto,
   PaginatedRequestDtoForResult,
 } from 'src/dto/pagination.dto';
 import { ResultsService } from './results.service';
@@ -37,24 +35,38 @@ export class ResultsController {
   @ApiParam({ name: 'salmon_id', type: 'integer', description: 'リザルトID' })
   @ApiTags('リザルト')
   @ApiOperation({ operationId: '取得' })
-  find() {}
+  find(
+    @Param('salmon_id', ParseIntPipe) salmonId: number,
+  ): Promise<ResultModel> {
+    return this.service.find(salmonId);
+  }
 
   @Get('')
   @ApiTags('リザルト')
   @ApiOperation({ operationId: '一括取得' })
-  findAll(@Query() query: PaginatedRequestDtoForResult) {}
+  findMany(@Query() query: PaginatedRequestDtoForResult): Promise<ResultModel> {
+    return;
+  }
 
   @Get('schedules/:schedule_id')
   @ApiParam({ name: 'schedule_id', type: 'integer', description: 'シフトID' })
   @ApiTags('リザルト一覧')
   @ApiOperation({ operationId: 'スケジュール指定' })
-  findAll_schedules(@Query() query: PaginatedRequestDtoForResult) {}
+  findManyByScheduleId(
+    @Query() query: PaginatedRequestDtoForResult,
+  ): Promise<ResultModel[]> {
+    return;
+  }
 
   @Get('users/:nsaid')
-  @ApiParam({ name: 'nsaid', type: 'string', description: 'プレイヤーID' })
   @ApiTags('リザルト一覧')
   @ApiOperation({ operationId: 'プレイヤー指定' })
-  findAll_users(@Query() query: PaginatedRequestDtoForResult) {}
+  findManyByUser(
+    @Param('nsaid') nsaid: string,
+    @Query() query: PaginatedRequestDto,
+  ): Promise<ResultModel[]> {
+    return this.service.findMany(query);
+  }
 
   @Post('')
   @ApiTags('リザルト')

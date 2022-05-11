@@ -1,4 +1,4 @@
-import { User, User as UserModel } from '.prisma/client';
+import { User as UserModel } from '.prisma/client';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 
@@ -8,8 +8,8 @@ export class UsersService {
 
   async findMany(skip: number, take: number): Promise<UserModel[]> {
     return await this.prisma.user.findMany({
-      skip: skip || undefined,
-      take: take || undefined,
+      skip: skip,
+      take: take,
     });
   }
 

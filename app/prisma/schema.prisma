@@ -12,63 +12,81 @@ datasource db {
 }
 
 model Result {
-  salmonId       Int      @id @default(autoincrement()) @map("salmon_id")
-  bossCounts     Int[]    @map("boss_counts")
-  bossKillCounts Int[]    @map("boss_kill_counts")
-  dangerRate     Float    @map("danger_rate")
-  endTime        Int      @map("end_time")
-  playTime       Int      @map("play_time")
-  startTime      Int      @map("start_time")
-  failureReason  String?  @map("failure_reason")
-  failureWave    Int?     @map("failure_wave")
-  isClear        Boolean  @map("is_clear")
+  salmonId       Int                  @id @default(autoincrement()) @map("salmon_id")
+  bossCounts     Int[]                @map("boss_counts")
+  bossKillCounts Int[]                @map("boss_kill_counts")
+  dangerRate     Float                @map("danger_rate")
+  endTime        Int                  @map("end_time")
+  playTime       Int                  @map("play_time")
+  startTime      Int                  @map("start_time")
   members        String[]
   players        Player[]
   waves          Wave[]
-  schedule       Schedule @relation(fields: [startTime], references: [startTime])
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt()
+  jobResult      JobResult?
+  schedule       ResultsOnSchedules[]
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt()
+  jobId          Int
+  scheduleId     Int
 
   @@unique([playTime, members])
   @@map("results")
 }
 
+model JobResult {
+  id            Int     @id @default(autoincrement())
+  failureReason String? @map("failure_reason")
+  failureWave   Int?    @map("failure_wave")
+  isClear       Boolean @map("is_clear")
+  result        Result  @relation(fields: [resultId], references: [salmonId])
+  resultId      Int     @unique
+}
+
+model ResultsOnSchedules {
+  result     Result   @relation(fields: [resultId], references: [salmonId])
+  resultId   Int
+  schedule   Schedule @relation(fields: [scheduleId], references: [startTime])
+  scheduleId Int
+
+  @@id([resultId, scheduleId])
+}
+
 model Schedule {
-  startTime  Int      @id @map("start_time")
-  stageId    Int      @map("stage_id")
-  endTime    Int      @map("end_time")
-  rareWeapon Int?     @map("rare_weapon")
-  weaponList Int[]    @map("weapon_list")
-  results    Result[]
+  startTime  Int                  @id @map("start_time")
+  stageId    Int                  @map("stage_id")
+  endTime    Int                  @map("end_time")
+  rareWeapon Int?                 @map("rare_weapon")
+  weaponList Int[]                @map("weapon_list")
+  results    ResultsOnSchedules[]
 
   @@map("schedules")
 }
 
 model Player {
-  id              Int     @id @default(autoincrement())
-  salmonId        Int     @map("salmon_id")
+  id              Int    @id @default(autoincrement()) @map("salmon_id")
   nsaid           String
-  bossKillCounts  Int[]   @map("boss_kill_counts")
-  deadCount       Int     @map("dead_count")
-  goldenIkuraNum  Int     @map("golden_ikura_num")
-  helpCount       Int     @map("help_count")
-  ikuraNum        Int     @map("ikura_num")
-  jobId           Int?    @map("job_id")
-  jobScore        Int?    @map("job_score")
-  jobRate         Int?    @map("job_rate")
-  kumaPoint       Int?    @map("kuma_point")
-  gradeId         Int?    @map("grade_id")
-  gradePoint      Int?    @map("grade_point")
-  gradePointDelta Int?    @map("grade_point_delta")
+  bossKillCounts  Int[]  @map("boss_kill_counts")
+  deadCount       Int    @map("dead_count")
+  goldenIkuraNum  Int    @map("golden_ikura_num")
+  helpCount       Int    @map("help_count")
+  ikuraNum        Int    @map("ikura_num")
+  jobId           Int?   @map("job_id")
+  jobScore        Int?   @map("job_score")
+  jobRate         Int?   @map("job_rate")
+  kumaPoint       Int?   @map("kuma_point")
+  gradeId         Int?   @map("grade_id")
+  gradePoint      Int?   @map("grade_point")
+  gradePointDelta Int?   @map("grade_point_delta")
   name            String
   species         String
   style           String
-  specialId       Int     @map("special_id")
-  specialCount    Int[]   @map("special_count")
-  weaponList      Int[]   @map("weapon_list")
-  result          Result? @relation(fields: [salmonId], references: [salmonId])
+  specialId       Int    @map("special_id")
+  specialCount    Int[]  @map("special_count")
+  weaponList      Int[]  @map("weapon_list")
+  result          Result @relation(fields: [resultId], references: [salmonId])
+  resultId        Int
 
-  @@unique([salmonId, nsaid])
+  @@unique([id, nsaid])
   @@map("players")
 }
 
@@ -84,7 +102,8 @@ model Wave {
   quotaNum          Int     @map("quota_num") // ノルマ数
   failureReason     String? @map("failure_reason") // 失敗理由
   isClear           Boolean @map("is_clear") // クリアしたか
-  result            Result? @relation(fields: [salmonId], references: [salmonId])
+  result            Result  @relation(fields: [resultId], references: [salmonId])
+  resultId          Int
 
   @@unique([waveId, salmonId])
   @@map("waves")
@@ -92,10 +111,11 @@ model Wave {
 
 model User {
   id           Int      @id @default(autoincrement())
-  uid          String   @unique // SplatNet2 ID
-  username     String? // ユーザ名
-  mail         String? // メールアドレス
-  password     String? // パスワード
+  uid          String // Twitter ID
+  nsaid        String?  @unique // SplatNet2 ID
+  name         String // Twitter name
+  screenName   String   @map("screen_name") // Twitter screen name
+  friendCode   String?  @map("friend_code")
   thumbnailURL String?  @map("thumbnail_url") // 表示される画像
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt()

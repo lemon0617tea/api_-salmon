@@ -5,7 +5,12 @@
  */
 
 import { applyDecorators, Type } from '@nestjs/common';
-import { ApiOkResponse, ApiProperty, getSchemaPath } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { Expose, Transform } from 'class-transformer';
 
 export class PaginatedRequestDto {
@@ -30,13 +35,15 @@ export class PaginatedRequestDto {
 }
 
 export class PaginatedRequestDtoForResult extends PaginatedRequestDto {
-  @Expose()
-  @ApiProperty({
+  @ApiPropertyOptional({
     title: '',
     default: false,
     description: 'クリアしたリザルトのみ',
   })
-  readonly is_only_clear: Boolean = false;
+  readonly is_clear?: boolean;
+
+  @ApiPropertyOptional()
+  readonly nsaid?: string;
 }
 
 export class PaginatedDto<T> {

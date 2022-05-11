@@ -2,51 +2,24 @@ openapi: 3.0.0
 paths:
   /v1/users:
     get:
-      operationId: 一覧取得
-      summary: ''
-      description: 登録順にユーザ情報を取得します
+      operationId: UsersController_findMany
       parameters:
         - name: offset
           required: true
           in: query
           schema:
-            minimum: 0
-            title: offset
-            default: 0
             type: number
         - name: limit
           required: true
           in: query
           schema:
-            minimum: 0
-            maximum: 200
-            title: limit
-            default: 25
             type: number
       responses:
         '200':
           description: ''
-      tags:
-        - ユーザー
-    post:
-      operationId: 作成
-      summary: ''
-      parameters:
-        - name: uid
-          required: true
-          in: query
-          schema:
-            type: string
-      responses:
-        '201':
-          description: ''
-      tags:
-        - ユーザー
-  /v1/users/{nsaid}:
+  /v1/users/{user_id}:
     get:
-      operationId: 取得
-      summary: ''
-      description: 指定されたIDのユーザを取得します
+      operationId: UsersController_find
       parameters:
         - name: nsaid
           required: true
@@ -58,38 +31,6 @@ paths:
           description: ''
         '404':
           description: ''
-      tags:
-        - ユーザー
-    put:
-      operationId: 更新
-      summary: ''
-      parameters:
-        - name: nsaid
-          required: true
-          in: path
-          description: ユーザーID
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-      tags:
-        - ユーザー
-    delete:
-      operationId: 削除
-      summary: ''
-      parameters:
-        - name: nsaid
-          required: true
-          in: path
-          description: ユーザーID
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-      tags:
-        - ユーザー
   /v1/results/{salmon_id}:
     get:
       operationId: 取得
@@ -158,14 +99,19 @@ paths:
             title: limit
             default: 25
             type: number
-        - name: is_only_clear
-          required: true
+        - name: is_clear
+          required: false
           in: query
           description: クリアしたリザルトのみ
           schema:
             title: ''
             default: false
             type: boolean
+        - name: nsaid
+          required: false
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -202,14 +148,19 @@ paths:
             title: limit
             default: 25
             type: number
-        - name: is_only_clear
-          required: true
+        - name: is_clear
+          required: false
           in: query
           description: クリアしたリザルトのみ
           schema:
             title: ''
             default: false
             type: boolean
+        - name: nsaid
+          required: false
+          in: query
+          schema:
+            type: string
         - name: schedule_id
           required: true
           in: path
@@ -226,6 +177,11 @@ paths:
       operationId: プレイヤー指定
       summary: ''
       parameters:
+        - name: nsaid
+          required: true
+          in: path
+          schema:
+            type: string
         - name: offset
           required: true
           in: query
@@ -243,20 +199,6 @@ paths:
             title: limit
             default: 25
             type: number
-        - name: is_only_clear
-          required: true
-          in: query
-          description: クリアしたリザルトのみ
-          schema:
-            title: ''
-            default: false
-            type: boolean
-        - name: nsaid
-          required: true
-          in: path
-          description: プレイヤーID
-          schema:
-            type: string
       responses:
         '200':
           description: ''
@@ -298,6 +240,7 @@ paths:
     get:
       operationId: 取得
       summary: ''
+      description: スケジュールを取得します
       parameters: []
       responses:
         '200':
