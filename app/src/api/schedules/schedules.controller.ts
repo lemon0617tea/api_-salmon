@@ -1,5 +1,10 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { SchedulesService } from './schedules.service';
 
 @Controller('schedules')
@@ -10,6 +15,7 @@ export class SchedulesController {
   @ApiParam({ name: 'schedule_id', type: 'integer', description: 'シフトID' })
   @ApiTags('スケジュール')
   @ApiOperation({ operationId: '統計取得' })
+  @ApiNotFoundResponse()
   findStats() {}
 
   @Get('')
@@ -20,7 +26,7 @@ export class SchedulesController {
   })
   findMany() {}
 
-  @Post()
+  @Post('')
   @ApiTags('スケジュール')
   @ApiOperation({ operationId: '追加' })
   create() {

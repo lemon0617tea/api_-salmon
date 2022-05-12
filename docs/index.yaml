@@ -43,7 +43,7 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
+        '404':
           description: ''
       tags:
         - リザルト
@@ -58,7 +58,7 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
+        '404':
           description: ''
       tags:
         - リザルト
@@ -73,7 +73,7 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
+        '404':
           description: ''
       tags:
         - リザルト
@@ -168,7 +168,7 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
+        '404':
           description: ''
       tags:
         - リザルト一覧
@@ -200,7 +200,7 @@ paths:
             default: 25
             type: number
       responses:
-        '200':
+        '404':
           description: ''
       tags:
         - リザルト一覧
@@ -216,7 +216,7 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
+        '404':
           description: ''
       tags:
         - ランキング
@@ -232,7 +232,7 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
+        '404':
           description: ''
       tags:
         - スケジュール

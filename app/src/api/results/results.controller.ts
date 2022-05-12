@@ -35,6 +35,7 @@ export class ResultsController {
   @ApiParam({ name: 'salmon_id', type: 'integer', description: 'リザルトID' })
   @ApiTags('リザルト')
   @ApiOperation({ operationId: '取得' })
+  @ApiNotFoundResponse()
   find(
     @Param('salmon_id', ParseIntPipe) salmonId: number,
   ): Promise<ResultModel> {
@@ -52,6 +53,7 @@ export class ResultsController {
   @ApiParam({ name: 'schedule_id', type: 'integer', description: 'シフトID' })
   @ApiTags('リザルト一覧')
   @ApiOperation({ operationId: 'スケジュール指定' })
+  @ApiNotFoundResponse()
   findManyByScheduleId(
     @Query() query: PaginatedRequestDtoForResult,
   ): Promise<ResultModel[]> {
@@ -61,6 +63,7 @@ export class ResultsController {
   @Get('users/:nsaid')
   @ApiTags('リザルト一覧')
   @ApiOperation({ operationId: 'プレイヤー指定' })
+  @ApiNotFoundResponse()
   findManyByUser(
     @Param('nsaid') nsaid: string,
     @Query() query: PaginatedRequestDto,
@@ -77,11 +80,13 @@ export class ResultsController {
   @ApiParam({ name: 'salmon_id', type: 'integer', description: 'リザルトID' })
   @ApiTags('リザルト')
   @ApiOperation({ operationId: '更新' })
+  @ApiNotFoundResponse()
   update() {}
 
   @Delete(':salmon_id')
   @ApiParam({ name: 'salmon_id', type: 'integer', description: 'リザルトID' })
   @ApiTags('リザルト')
   @ApiOperation({ operationId: '削除' })
+  @ApiNotFoundResponse()
   delete() {}
 }

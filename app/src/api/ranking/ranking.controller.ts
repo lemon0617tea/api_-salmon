@@ -1,5 +1,11 @@
 import { Controller, Delete, Get, HttpStatus, Post, Put } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('ranking')
 export class RankingController {
@@ -7,5 +13,6 @@ export class RankingController {
   @ApiParam({ name: 'schedule_id', type: 'integer', description: 'シフトID' })
   @ApiTags('ランキング')
   @ApiOperation({ operationId: '取得' })
+  @ApiNotFoundResponse()
   findAll() {}
 }
