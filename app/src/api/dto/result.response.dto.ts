@@ -41,7 +41,7 @@ export class Wave implements WaveResult {
   ikura_num: number;
 }
 
-export interface PlayerResult {
+interface PlayerResultType {
   nsaid: string;
   boss_kill_counts: number[];
   dead_count: number;
@@ -54,7 +54,7 @@ export interface PlayerResult {
   weapon_list: number[];
 }
 
-export class Player implements PlayerResult {
+export class Player implements PlayerResultType {
   @ApiProperty()
   nsaid: string;
   @ApiProperty()

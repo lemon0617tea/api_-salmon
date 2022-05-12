@@ -88,7 +88,7 @@ class EnumImageType<T> {
   name: string;
 }
 
-class BossCount {
+export class BossCount {
   @ApiProperty()
   @ValidateNested()
   boss: EnumType<BossType>;
@@ -98,7 +98,7 @@ class BossCount {
   count: number;
 }
 
-class BossCounts {
+export class BossCounts {
   @ApiProperty()
   @ValidateNested()
   @Type(() => BossCount)
@@ -211,11 +211,11 @@ class WeaponList {
   weapon: Weapon;
 }
 
-class PlayerResult {
+export class PlayerResult {
   @ApiProperty()
   @ValidateNested()
   @Type(() => BossCounts)
-  boss_kill_count: BossCounts;
+  boss_kill_counts: BossCounts;
   @IsInt()
   @Min(0)
   @ApiProperty()
@@ -252,15 +252,15 @@ class PlayerResult {
 
 class Schedule {
   @Expose()
-  @Transform((param) => new Date(param.value * 1000).toISOString())
-  @IsDateString()
+  @Transform((param) => new Date(param.value * 1000))
+  @IsDate()
   @ApiProperty()
-  start_time: string;
+  start_time: Date;
   @Expose()
-  @Transform((param) => new Date(param.value * 1000).toISOString())
-  @IsDateString()
+  @Transform((param) => new Date(param.value * 1000))
+  @IsDate()
   @ApiProperty()
-  end_time: string;
+  end_time: Date;
   @ApiProperty()
   @ValidateNested()
   @Type(() => EnumImageType)
@@ -303,10 +303,10 @@ class Result {
   @ApiProperty()
   danger_rate: number;
   @Expose()
-  @Transform((param) => new Date(param.value * 1000).toISOString())
-  @IsDateString()
+  @Transform((param) => new Date(param.value * 1000))
+  @IsDate()
   @ApiProperty()
-  end_time: string;
+  end_time: Date;
   @ApiProperty()
   @ValidateNested()
   @Type(() => Grade)
@@ -330,39 +330,42 @@ class Result {
   @Min(0)
   @ApiProperty()
   job_rate: number;
-  // @ApiProperty()
-  // @ValidateNested()
-  // job_result: JobResult;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => JobResult)
+  job_result: JobResult;
   @IsInt()
   @ApiProperty()
   job_score: number;
   @IsInt()
   @ApiProperty()
   kuma_point: number;
-  // @ApiProperty()
-  // @ValidateNested()
-  // my_result: PlayerResult;
-  // @ApiProperty({ type: [PlayerResult] })
-  // @ValidateNested({ each: true })
-  // other_results: PlayerResult[];
-  @Expose()
-  @Transform((param) => new Date(param.value * 1000).toISOString())
-  @IsDateString()
   @ApiProperty()
-  play_time: string;
+  @ValidateNested()
+  @Type(() => PlayerResult)
+  my_result: PlayerResult;
+  @ApiProperty({ type: [PlayerResult] })
+  @ValidateNested({ each: true })
+  @Type(() => PlayerResult)
+  other_results: PlayerResult[];
+  @Expose()
+  @Transform((param) => new Date(param.value * 1000))
+  @IsDate()
+  @ApiProperty()
+  play_time: Date;
   @ApiProperty()
   @ValidateNested()
   @Type(() => PlayerType)
-  player_time: PlayerType;
+  player_type: PlayerType;
   @ApiProperty()
   @ValidateNested()
   @Type(() => Schedule)
   schedule: Schedule;
   @Expose()
-  @Transform((param) => new Date(param.value * 1000).toISOString())
-  @IsDateString()
+  @Transform((param) => new Date(param.value * 1000))
+  @IsDate()
   @ApiProperty()
-  start_time: string;
+  start_time: Date;
   @ApiProperty({ type: [WaveResult] })
   @ValidateNested({ each: true })
   @Type(() => WaveResult)

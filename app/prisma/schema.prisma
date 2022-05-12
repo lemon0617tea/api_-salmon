@@ -16,9 +16,9 @@ model Result {
   bossCounts     Int[]                @map("boss_counts")
   bossKillCounts Int[]                @map("boss_kill_counts")
   dangerRate     Float                @map("danger_rate")
-  endTime        Int                  @map("end_time")
-  playTime       Int                  @map("play_time")
-  startTime      Int                  @map("start_time")
+  endTime        DateTime             @map("end_time")
+  playTime       DateTime             @map("play_time")
+  startTime      DateTime             @map("start_time")
   members        String[]
   players        Player[]
   waves          Wave[]
@@ -26,8 +26,6 @@ model Result {
   schedule       ResultsOnSchedules[]
   createdAt      DateTime             @default(now())
   updatedAt      DateTime             @updatedAt()
-  jobId          Int
-  scheduleId     Int
 
   @@unique([playTime, members])
   @@map("results")
@@ -46,15 +44,15 @@ model ResultsOnSchedules {
   result     Result   @relation(fields: [resultId], references: [salmonId])
   resultId   Int
   schedule   Schedule @relation(fields: [scheduleId], references: [startTime])
-  scheduleId Int
+  scheduleId DateTime
 
   @@id([resultId, scheduleId])
 }
 
 model Schedule {
-  startTime  Int                  @id @map("start_time")
+  startTime  DateTime             @id @map("start_time")
   stageId    Int                  @map("stage_id")
-  endTime    Int                  @map("end_time")
+  endTime    DateTime             @map("end_time")
   rareWeapon Int?                 @map("rare_weapon")
   weaponList Int[]                @map("weapon_list")
   results    ResultsOnSchedules[]
