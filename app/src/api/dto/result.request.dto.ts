@@ -1,16 +1,37 @@
+import { ParseEnumPipe } from '@nestjs/common';
 import { ApiInternalServerErrorResponse, ApiProperty } from '@nestjs/swagger';
-import { Expose, Transform } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  ArrayNotEmpty,
+  IsArray,
   IsBoolean,
+  IsDate,
+  IsDateString,
+  IsEnum,
   IsInt,
+  IsNotEmpty,
   IsNumber,
+  IsNumberString,
   IsOptional,
+  IsString,
   Max,
   min,
   Min,
   ValidateNested,
 } from 'class-validator';
 import { FailureReason, SpecialType } from './result.response.dto';
+
+enum PlayerStyle {
+  GIRL = 'girl',
+  BOY = 'boy',
+}
+
+enum Species {
+  INKLINGS = 'inklings',
+  OCTOLINGS = 'octolings',
+}
 
 enum BossType {
   GOLDEN = 'sakelien-golden',
@@ -22,171 +43,6 @@ enum BossType {
   DIVER = 'sakediver',
   DOZER = 'sakedozer',
   ROCKET = 'sakerocket',
-}
-
-class BossCount {
-  @ApiProperty()
-  @ValidateNested()
-  boss: EnumType<BossType>;
-  @IsInt()
-  @Min(0)
-  @ApiProperty()
-  count: number;
-}
-
-class BossCounts {
-  @ApiProperty()
-  @ValidateNested()
-  '3': BossCount;
-  @ApiProperty()
-  @ValidateNested()
-  '6': BossCount;
-  @ApiProperty()
-  @ValidateNested()
-  '9': BossCount;
-  @ApiProperty()
-  @ValidateNested()
-  '12': BossCount;
-  @ApiProperty()
-  @ValidateNested()
-  '13': BossCount;
-  @ApiProperty()
-  @ValidateNested()
-  '14': BossCount;
-  @ApiProperty()
-  @ValidateNested()
-  '15': BossCount;
-  @ApiProperty()
-  @ValidateNested()
-  '16': BossCount;
-  @ApiProperty()
-  @ValidateNested()
-  '21': BossCount;
-}
-
-class Grade {
-  @Expose()
-  @Transform((param) => {
-    parseInt(param.value, 10);
-  })
-  @Max(5)
-  @Min(0)
-  @ApiProperty()
-  id: number;
-  @ApiProperty()
-  long_name: string;
-  @ApiProperty()
-  short_name: string;
-}
-
-class JobResult {
-  @IsOptional()
-  @IsInt()
-  @Max(3)
-  @Min(1)
-  @ApiProperty()
-  failure_wave: number;
-  @IsOptional()
-  @ApiProperty()
-  @ValidateNested()
-  failure_reason: FailureReason;
-  @IsBoolean()
-  @ApiProperty()
-  is_clear: boolean;
-}
-
-enum PlayerStyle {
-  GIRL = 'girl',
-  BOY = 'boy',
-}
-
-enum Species {
-  INKLING = 'inkling',
-  OCTOLING = 'octoling',
-}
-
-class PlayerType {
-  @ApiProperty()
-  @ValidateNested()
-  style: PlayerStyle;
-  @ApiProperty()
-  species: Species;
-}
-
-class Special {
-  @Expose()
-  @Transform((param) => {
-    parseInt(param.value, 10);
-  })
-  @Max(9)
-  @Min(0)
-  @ApiProperty()
-  id: number;
-  @ApiProperty()
-  image_a: string;
-  @ApiProperty()
-  image_b: string;
-}
-
-class Weapon {
-  @Expose()
-  @Transform((param) => {
-    parseInt(param.value, 10);
-  })
-  @ApiProperty()
-  id: number;
-  @ApiProperty()
-  image: string;
-  @ApiProperty()
-  name: string;
-  @ApiProperty()
-  thumbnail: string;
-}
-
-class WeaponList {
-  @Expose()
-  @Transform((param) => {
-    parseInt(param.value, 10);
-  })
-  @ApiProperty()
-  id: number;
-  @ApiProperty()
-  @ValidateNested()
-  weapon: Weapon;
-}
-class PlayerResult {
-  @ApiProperty()
-  @ValidateNested()
-  boss_kill_count: BossCounts;
-  @IsInt()
-  @Min(0)
-  @ApiProperty()
-  dead_count: number;
-  @IsInt()
-  @Min(0)
-  @ApiProperty()
-  golden_ikura_num: number;
-  @IsInt()
-  @Min(0)
-  @ApiProperty()
-  help_count: number;
-  @IsInt()
-  @Min(0)
-  @ApiProperty()
-  ikura_num: number;
-  @ApiProperty()
-  name: string;
-  @ApiProperty()
-  pid: string;
-  @ApiProperty()
-  @ValidateNested()
-  player_type: PlayerType;
-  @ApiProperty()
-  @ValidateNested()
-  special: Special;
-  @ApiProperty()
-  @ValidateNested({ each: true })
-  weapon_list: WeaponList[];
 }
 
 enum WaterLevel {
@@ -213,8 +69,13 @@ enum StageType {
   SHAKERIDE = '/images/coop_stage/50064ec6e97aac91e70df5fc2cfecf61ad8615fd.png',
 }
 
+// interface EnumType<T> {
+//   key: T;
+//   name: string;
+// }
+
 class EnumType<T> {
-  @ApiProperty()
+  @ApiProperty({ type: String })
   key: T;
   @ApiProperty()
   name: string;
@@ -227,24 +88,193 @@ class EnumImageType<T> {
   name: string;
 }
 
-class Schedule {
-  @IsInt()
-  @ApiProperty()
-  start_time: number;
-  @IsInt()
-  @ApiProperty()
-  end_time: number;
+class BossCount {
   @ApiProperty()
   @ValidateNested()
+  boss: EnumType<BossType>;
+  @IsInt()
+  @Min(0)
+  @ApiProperty()
+  count: number;
+}
+
+class BossCounts {
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => BossCount)
+  '3': BossCount;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => BossCount)
+  '6': BossCount;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => BossCount)
+  '9': BossCount;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => BossCount)
+  '12': BossCount;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => BossCount)
+  '13': BossCount;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => BossCount)
+  '14': BossCount;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => BossCount)
+  '15': BossCount;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => BossCount)
+  '16': BossCount;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => BossCount)
+  '21': BossCount;
+}
+
+class Grade {
+  @Expose()
+  @Transform((param) => parseInt(param.value, 10))
+  @IsInt()
+  @Max(5)
+  @Min(0)
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  long_name: string;
+  @ApiProperty()
+  short_name: string;
+}
+
+class JobResult {
+  @IsOptional()
+  @IsInt()
+  @Max(3)
+  @Min(1)
+  @ApiProperty({ example: 1 })
+  failure_wave: number;
+  @IsOptional()
+  @ApiProperty({ enum: FailureReason, example: FailureReason.TIMELIMIT })
+  failure_reason: FailureReason;
+  @IsBoolean()
+  @ApiProperty({ example: false })
+  is_clear: boolean;
+}
+
+class PlayerType {
+  @ApiProperty({ enum: PlayerStyle })
+  style: PlayerStyle;
+  @ApiProperty({ enum: Species })
+  species: Species;
+}
+
+class Special {
+  @Expose()
+  @Transform((param) => parseInt(param.value, 10))
+  @Max(9)
+  @Min(0)
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  image_a: string;
+  @ApiProperty()
+  image_b: string;
+}
+
+class Weapon {
+  @Expose()
+  @Transform((param) => parseInt(param.value, 10))
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  image: string;
+  @ApiProperty()
+  name: string;
+  @ApiProperty()
+  thumbnail: string;
+}
+
+class WeaponList {
+  @Expose()
+  @Transform((param) => parseInt(param.value, 10))
+  @IsInt()
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => Weapon)
+  weapon: Weapon;
+}
+
+class PlayerResult {
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => BossCounts)
+  boss_kill_count: BossCounts;
+  @IsInt()
+  @Min(0)
+  @ApiProperty()
+  dead_count: number;
+  @IsInt()
+  @Min(0)
+  @ApiProperty()
+  golden_ikura_num: number;
+  @IsInt()
+  @Min(0)
+  @ApiProperty()
+  help_count: number;
+  @IsInt()
+  @Min(0)
+  @ApiProperty()
+  ikura_num: number;
+  @ApiProperty()
+  name: string;
+  @ApiProperty()
+  pid: string;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => PlayerType)
+  player_type: PlayerType;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => Special)
+  special: Special;
+  @ApiProperty({ type: [WeaponList] })
+  @ValidateNested({ each: true })
+  @Type(() => WeaponList)
+  weapon_list: WeaponList[];
+}
+
+class Schedule {
+  @Expose()
+  @Transform((param) => new Date(param.value * 1000).toISOString())
+  @IsDateString()
+  @ApiProperty()
+  start_time: string;
+  @Expose()
+  @Transform((param) => new Date(param.value * 1000).toISOString())
+  @IsDateString()
+  @ApiProperty()
+  end_time: string;
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => EnumImageType)
   stage: EnumImageType<StageType>;
 }
 
 class WaveResult {
   @ApiProperty()
   @ValidateNested()
+  @Type(() => EnumType)
   water_level: EnumType<WaterLevel>;
   @ApiProperty()
   @ValidateNested()
+  @Type(() => EnumType)
   event_type: EnumType<EventType>;
   @IsInt()
   @Min(0)
@@ -267,23 +297,27 @@ class WaveResult {
 class Result {
   @ApiProperty()
   @ValidateNested()
+  @Type(() => BossCounts)
   boss_counts: BossCounts;
   @IsNumber()
   @ApiProperty()
   danger_rate: number;
-  @IsInt()
+  @Expose()
+  @Transform((param) => new Date(param.value * 1000).toISOString())
+  @IsDateString()
   @ApiProperty()
-  end_time: number;
+  end_time: string;
   @ApiProperty()
   @ValidateNested()
+  @Type(() => Grade)
   grade: Grade;
   @IsInt()
-  @Min(999)
+  @Max(999)
   @Min(0)
   @ApiProperty()
   grade_point: number;
   @IsInt()
-  @Min(20)
+  @Max(20)
   @Min(-20)
   @ApiProperty()
   grade_point_delta: number;
@@ -296,40 +330,51 @@ class Result {
   @Min(0)
   @ApiProperty()
   job_rate: number;
-  @ApiProperty()
-  @ValidateNested()
-  job_result: JobResult;
+  // @ApiProperty()
+  // @ValidateNested()
+  // job_result: JobResult;
   @IsInt()
   @ApiProperty()
   job_score: number;
   @IsInt()
   @ApiProperty()
   kuma_point: number;
+  // @ApiProperty()
+  // @ValidateNested()
+  // my_result: PlayerResult;
+  // @ApiProperty({ type: [PlayerResult] })
+  // @ValidateNested({ each: true })
+  // other_results: PlayerResult[];
+  @Expose()
+  @Transform((param) => new Date(param.value * 1000).toISOString())
+  @IsDateString()
+  @ApiProperty()
+  play_time: string;
   @ApiProperty()
   @ValidateNested()
-  my_result: PlayerResult;
-  @ApiProperty()
-  @ValidateNested({ each: true })
-  other_results: PlayerResult[];
-  @IsInt()
-  @ApiProperty()
-  play_time: number;
-  @ApiProperty()
-  @ValidateNested()
+  @Type(() => PlayerType)
   player_time: PlayerType;
   @ApiProperty()
   @ValidateNested()
+  @Type(() => Schedule)
   schedule: Schedule;
-  @IsInt()
+  @Expose()
+  @Transform((param) => new Date(param.value * 1000).toISOString())
+  @IsDateString()
   @ApiProperty()
-  start_time: number;
-  @ApiProperty()
+  start_time: string;
+  @ApiProperty({ type: [WaveResult] })
   @ValidateNested({ each: true })
+  @Type(() => WaveResult)
   wave_details: WaveResult[];
 }
 
 export class Results {
-  @ApiProperty()
+  @ApiProperty({ type: [Result] })
+  @IsArray()
+  @ArrayNotEmpty()
+  @ArrayMaxSize(50)
   @ValidateNested({ each: true })
+  @Type(() => Result)
   results: Result[];
 }

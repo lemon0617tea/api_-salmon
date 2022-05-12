@@ -6,6 +6,7 @@ import {
   PaginatedRequestDto,
   PaginatedRequestDtoForResult,
 } from 'src/dto/pagination.dto';
+import { Results as UploadedResultsModel } from '../dto/result.request.dto';
 
 @Injectable()
 export class ResultsService {
@@ -29,5 +30,10 @@ export class ResultsService {
       take: Number(query.limit),
       skip: Number(query.offset),
     });
+  }
+
+  async create(request: UploadedResultsModel) {
+    const result = request.results[0];
+    console.log(result);
   }
 }

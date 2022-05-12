@@ -5,26 +5,29 @@ import {
   Delete,
   Get,
   Param,
-  ParseBoolPipe,
   ParseIntPipe,
   Post,
   Put,
   Query,
+  ValidationPipe,
+  VersioningType,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
+  ApiBody,
   ApiExtraModels,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import {
-  ApiPaginatedResponse,
   PaginatedDto,
   PaginatedRequestDto,
   PaginatedRequestDtoForResult,
 } from 'src/dto/pagination.dto';
+import { Results as UploadedResultsModel } from '../dto/result.request.dto';
 import { ResultsService } from './results.service';
 
 @Controller('results')
@@ -75,7 +78,15 @@ export class ResultsController {
   @Post('')
   @ApiTags('リザルト')
   @ApiOperation({ operationId: '登録' })
-  create() {}
+  @ApiOkResponse()
+  @ApiBadRequestResponse()
+  // @ApiBody({ type: UploadedResultsModel })
+  create(
+    @Body(new ValidationPipe({ transform: true }))
+    request: UploadedResultsModel,
+  ): void {
+    this.service.create(request);
+  }
 
   @Put(':salmon_id')
   @ApiParam({ name: 'salmon_id', type: 'integer', description: 'リザルトID' })
