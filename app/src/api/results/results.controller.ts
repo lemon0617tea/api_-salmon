@@ -1,5 +1,6 @@
 import { Prisma, Result as ResultModel } from '.prisma/client';
 import {
+  Body,
   Controller,
   Delete,
   Get,
