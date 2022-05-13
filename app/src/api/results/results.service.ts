@@ -57,6 +57,7 @@ export class ResultsService {
 
   async create(request: UploadedResultsModel) {
     const result = request.results[0];
+    const pid = result.my_result.pid
     // オオモノ出現数
     const boss_counts: number[] = Object.values(result.boss_counts).map(
       (value) => value.count,
@@ -115,13 +116,13 @@ export class ResultsService {
               specialId: player.special.id,
               weaponList: player.weapon_list.map((value) => value.id),
               specialCounts: player.special_counts,
-              jobId: result.job_id,
-              jobScore: result.job_score,
-              kumaPoint: result.kuma_point,
-              jobRate: result.job_rate,
-              gradeId: result.grade.id,
-              gradePoint: result.grade_point,
-              gradePointDelta: result.grade_point_delta,
+              jobId: pid == player.pid ? result.job_id : null,
+              jobScore: pid == player.pid ? result.job_score : null,
+              kumaPoint: pid == player.pid ? result.kuma_point : null,
+              jobRate: pid == player.pid ? result.job_rate : null,
+              gradeId: pid == player.pid ? result.grade.id : null,
+              gradePoint: pid == player.pid ? result.grade_point : null,
+              gradePointDelta: pid == player.pid ? result.grade_point_delta : null,
             };
           }),
         },
