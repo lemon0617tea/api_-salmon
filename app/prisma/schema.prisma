@@ -12,20 +12,20 @@ datasource db {
 }
 
 model Result {
-  salmonId       Int                  @id @default(autoincrement()) @map("salmon_id")
-  bossCounts     Int[]                @map("boss_counts")
-  bossKillCounts Int[]                @map("boss_kill_counts")
-  dangerRate     Float                @map("danger_rate")
-  endTime        DateTime             @map("end_time")
-  playTime       DateTime             @map("play_time")
-  startTime      DateTime             @map("start_time")
+  salmonId       Int        @id @default(autoincrement()) @map("salmon_id")
+  bossCounts     Int[]      @map("boss_counts")
+  bossKillCounts Int[]      @map("boss_kill_counts")
+  dangerRate     Float      @map("danger_rate")
+  endTime        DateTime   @map("end_time")
+  playTime       DateTime   @map("play_time")
+  startTime      DateTime   @map("start_time")
   members        String[]
   players        Player[]
   waves          Wave[]
   jobResult      JobResult?
-  schedule       ResultsOnSchedules[]
-  createdAt      DateTime             @default(now())
-  updatedAt      DateTime             @updatedAt()
+  // schedule       ResultsOnSchedules[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt()
 
   @@unique([playTime, members])
   @@map("results")
@@ -37,31 +37,34 @@ model JobResult {
   failureWave   Int?    @map("failure_wave")
   isClear       Boolean @map("is_clear")
   result        Result  @relation(fields: [resultId], references: [salmonId])
-  resultId      Int     @unique
+  resultId      Int     @unique @map("salmon_id")
+
+  @@map("job_results")
 }
 
-model ResultsOnSchedules {
-  result     Result   @relation(fields: [resultId], references: [salmonId])
-  resultId   Int
-  schedule   Schedule @relation(fields: [scheduleId], references: [startTime])
-  scheduleId DateTime
+// model ResultsOnSchedules {
+//   result     Result   @relation(fields: [resultId], references: [salmonId])
+//   resultId   Int
+//   schedule   Schedule @relation(fields: [scheduleId], references: [startTime])
+//   scheduleId DateTime
 
-  @@id([resultId, scheduleId])
-}
+//   @@id([resultId, scheduleId])
+//   @@map("results")
+// }
 
 model Schedule {
-  startTime  DateTime             @id @map("start_time")
-  stageId    Int                  @map("stage_id")
-  endTime    DateTime             @map("end_time")
-  rareWeapon Int?                 @map("rare_weapon")
-  weaponList Int[]                @map("weapon_list")
-  results    ResultsOnSchedules[]
+  startTime  DateTime @id @map("start_time")
+  stageId    Int      @map("stage_id")
+  endTime    DateTime @map("end_time")
+  rareWeapon Int?     @map("rare_weapon")
+  weaponList Int[]    @map("weapon_list")
+  // results    ResultsOnSchedules[]
 
   @@map("schedules")
 }
 
 model Player {
-  id              Int    @id @default(autoincrement()) @map("salmon_id")
+  id              Int    @id @default(autoincrement())
   nsaid           String
   bossKillCounts  Int[]  @map("boss_kill_counts")
   deadCount       Int    @map("dead_count")
@@ -79,19 +82,18 @@ model Player {
   species         String
   style           String
   specialId       Int    @map("special_id")
-  specialCount    Int[]  @map("special_count")
+  specialCounts   Int[]  @map("special_count")
   weaponList      Int[]  @map("weapon_list")
   result          Result @relation(fields: [resultId], references: [salmonId])
   resultId        Int
 
-  @@unique([id, nsaid])
+  @@unique([resultId, nsaid])
   @@map("players")
 }
 
 model Wave {
   id                Int     @id @default(autoincrement())
   waveId            Int     @map("wave_id") // WAVE数
-  salmonId          Int     @map("salmon_id") // リザルトID
   eventType         Int     @map("event_type") // イベント
   waterLevel        Int     @map("water_level") // 潮位
   goldenIkuraNum    Int     @map("golden_ikura_num") // 金イクラ数
@@ -103,7 +105,7 @@ model Wave {
   result            Result  @relation(fields: [resultId], references: [salmonId])
   resultId          Int
 
-  @@unique([waveId, salmonId])
+  @@unique([resultId, waveId])
   @@map("waves")
 }
 

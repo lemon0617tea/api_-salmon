@@ -452,6 +452,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/WeaponList'
+        special_counts:
+          type: array
+          items:
+            type: string
       required:
         - boss_kill_counts
         - dead_count
@@ -463,6 +467,7 @@ components:
         - player_type
         - special
         - weapon_list
+        - special_counts
     EnumImageType:
       type: object
       properties:

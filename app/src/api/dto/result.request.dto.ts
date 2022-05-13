@@ -45,13 +45,13 @@ enum BossType {
   ROCKET = 'sakerocket',
 }
 
-enum WaterLevel {
+export enum WaterLevel {
   LOW = 'low',
   NORMAL = 'normal',
   HIGH = 'high',
 }
 
-enum EventType {
+export enum EventType {
   WATERLEVELS = 'water-levels',
   RUSH = 'rush',
   GEYSER = 'goldie-seeking',
@@ -248,6 +248,11 @@ export class PlayerResult {
   @ValidateNested({ each: true })
   @Type(() => WeaponList)
   weapon_list: WeaponList[];
+  @IsArray()
+  @ArrayMaxSize(3)
+  @ArrayMinSize(0)
+  @ApiProperty()
+  special_counts: number[];
 }
 
 class Schedule {
