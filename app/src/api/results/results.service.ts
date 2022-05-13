@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma, Result as ResultModel } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { PaginatedRequestDtoForResult } from 'src/dto/pagination.dto';
@@ -6,9 +10,11 @@ import {
   BossCounts,
   EventType,
   PlayerResult,
+  Result as UploadedResultModel,
   Results as UploadedResultsModel,
   WaterLevel,
 } from '../dto/result.request.dto';
+import dayjs from 'dayjs';
 const { transpose } = require('matrix-transpose');
 
 @Injectable()
@@ -45,47 +51,51 @@ export class ResultsService {
   // 基本的には同じはずだが、回線落ちしたときなどの対策
   async updatePlayerResult() {}
 
-  // 同じリザルトを別の人がアップロードしたときにリザルトをアップデートする
-  async updateResult() {}
-
   // 同じリザルトを別の人がアップロードしたときにバイトデータをアップデートする
   // 基本的には同じはずだが、回線落ちしたときなどの対策
   async updateWaveResult() {}
 
-  // リザルトを新規作成する
-  async createResult() {}
+  // 重複しているリザルトIDを返す
+  // 新規リザルトであればnullを返す
+  async getResultSalmonId(result: UploadedResultModel): Promise<number> {
+    const members: string[] = result.other_results
+      .concat([result.my_result])
+      .map((player) => player.pid)
+      .sort();
+    try {
+      return (
+        await this.prisma.result.findFirst({
+          where: {
+            playTime: {
+              lte: dayjs(result.play_time).add(10, 'second').toDate(),
+              gte: dayjs(result.play_time).subtract(10, 'second').toDate(),
+            },
+            members: {
+              equals: members,
+            },
+          },
+        })
+      ).salmonId;
+    } catch (error) {
+      return null;
+    }
+  }
 
-  async create(request: UploadedResultsModel) {
-    const result = request.results[0];
-    const pid = result.my_result.pid
-    // オオモノ出現数
+  async createResult(result: UploadedResultModel): Promise<number> {
     const boss_counts: number[] = Object.values(result.boss_counts).map(
       (value) => value.count,
     );
-    // プレイヤー情報
     const players: PlayerResult[] = result.other_results.concat([
       result.my_result,
     ]);
-    // オオモノ討伐数
     const boss_kill_counts = transpose(
       players.map((player) =>
         Object.values(player.boss_kill_counts).map((value) => value.count),
       ),
     ).map((value) => value.reduce((prev, next) => prev + next, 0));
-    // プレイヤー固有ID
     const members = players.map((player) => player.pid).sort();
-
-    await this.prisma.result.upsert({
-      where: {
-        playTime_members: {
-          playTime: result.play_time,
-          members: members,
-        },
-      },
-      // 別のプレイヤーがリザルトを追加した場合
-      // とりあえず何もしない
-      update: {},
-      create: {
+    await this.prisma.result.create({
+      data: {
         bossCounts: boss_counts,
         bossKillCounts: boss_kill_counts,
         dangerRate: result.danger_rate,
@@ -116,13 +126,21 @@ export class ResultsService {
               specialId: player.special.id,
               weaponList: player.weapon_list.map((value) => value.id),
               specialCounts: player.special_counts,
-              jobId: pid == player.pid ? result.job_id : null,
-              jobScore: pid == player.pid ? result.job_score : null,
-              kumaPoint: pid == player.pid ? result.kuma_point : null,
-              jobRate: pid == player.pid ? result.job_rate : null,
-              gradeId: pid == player.pid ? result.grade.id : null,
-              gradePoint: pid == player.pid ? result.grade_point : null,
-              gradePointDelta: pid == player.pid ? result.grade_point_delta : null,
+              jobId: result.my_result.pid == player.pid ? result.job_id : null,
+              jobScore:
+                result.my_result.pid == player.pid ? result.job_score : null,
+              kumaPoint:
+                result.my_result.pid == player.pid ? result.kuma_point : null,
+              jobRate:
+                result.my_result.pid == player.pid ? result.job_rate : null,
+              gradeId:
+                result.my_result.pid == player.pid ? result.grade.id : null,
+              gradePoint:
+                result.my_result.pid == player.pid ? result.grade_point : null,
+              gradePointDelta:
+                result.my_result.pid == player.pid
+                  ? result.grade_point_delta
+                  : null,
             };
           }),
         },
@@ -152,6 +170,58 @@ export class ResultsService {
           }),
         },
       },
+    });
+    return 0;
+  }
+
+  async updateResult(
+    salmonId: number,
+    result: UploadedResultModel,
+  ): Promise<number> {
+    try {
+      return (
+        await this.prisma.result.update({
+          where: {
+            salmonId: salmonId,
+          },
+          data: {
+            players: {
+              update: {
+                where: {
+                  resultId_nsaid: {
+                    resultId: salmonId,
+                    nsaid: result.my_result.pid,
+                  },
+                },
+                data: {
+                  jobId: result.job_id,
+                  jobScore: result.job_score,
+                  kumaPoint: result.kuma_point,
+                  jobRate: result.job_rate,
+                  gradeId: result.grade.id,
+                  gradePoint: result.grade_point,
+                  gradePointDelta: result.grade_point_delta,
+                },
+              },
+            },
+          },
+        })
+      ).salmonId;
+    } catch (error) {
+      throw new InternalServerErrorException(null, 'Could not update result.');
+    }
+  }
+
+  async create(request: UploadedResultsModel) {
+    request.results.forEach(async (result) => {
+      const salmonId = await this.getResultSalmonId(result);
+      if (salmonId === null) {
+        console.log('Create result');
+        this.createResult(result);
+      } else {
+        console.log('Update result');
+        this.updateResult(salmonId, result);
+      }
     });
   }
 }

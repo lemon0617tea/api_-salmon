@@ -22,6 +22,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { FailureReason, SpecialType } from './result.response.dto';
+import * as dayjs from 'dayjs';
 
 enum PlayerStyle {
   GIRL = 'girl',
@@ -257,12 +258,12 @@ export class PlayerResult {
 
 class Schedule {
   @Expose()
-  @Transform((param) => new Date(param.value * 1000))
+  @Transform((param) => dayjs.unix(param.value).toDate())
   @IsDate()
   @ApiProperty()
   start_time: Date;
   @Expose()
-  @Transform((param) => new Date(param.value * 1000))
+  @Transform((param) => dayjs.unix(param.value).toDate())
   @IsDate()
   @ApiProperty()
   end_time: Date;
@@ -299,7 +300,7 @@ class WaveResult {
   quota_num: number;
 }
 
-class Result {
+export class Result {
   @ApiProperty()
   @ValidateNested()
   @Type(() => BossCounts)
@@ -308,7 +309,7 @@ class Result {
   @ApiProperty()
   danger_rate: number;
   @Expose()
-  @Transform((param) => new Date(param.value * 1000))
+  @Transform((param) => dayjs.unix(param.value).toDate())
   @IsDate()
   @ApiProperty()
   end_time: Date;
@@ -354,7 +355,7 @@ class Result {
   @Type(() => PlayerResult)
   other_results: PlayerResult[];
   @Expose()
-  @Transform((param) => new Date(param.value * 1000))
+  @Transform((param) => dayjs.unix(param.value).toDate())
   @IsDate()
   @ApiProperty()
   play_time: Date;
@@ -367,7 +368,7 @@ class Result {
   @Type(() => Schedule)
   schedule: Schedule;
   @Expose()
-  @Transform((param) => new Date(param.value * 1000))
+  @Transform((param) => dayjs.unix(param.value).toDate())
   @IsDate()
   @ApiProperty()
   start_time: Date;

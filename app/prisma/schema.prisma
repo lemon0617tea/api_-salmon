@@ -32,12 +32,11 @@ model Result {
 }
 
 model JobResult {
-  id            Int     @id @default(autoincrement())
+  id            Int     @id @map("salmon_id")
   failureReason String? @map("failure_reason")
   failureWave   Int?    @map("failure_wave")
   isClear       Boolean @map("is_clear")
-  result        Result  @relation(fields: [resultId], references: [salmonId])
-  resultId      Int     @unique @map("salmon_id")
+  result        Result  @relation(fields: [id], references: [salmonId])
 
   @@map("job_results")
 }
