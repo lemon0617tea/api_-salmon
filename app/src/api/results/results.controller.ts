@@ -1,6 +1,7 @@
 import { Prisma, Result as ResultModel } from '.prisma/client';
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -9,6 +10,7 @@ import {
   Post,
   Put,
   Query,
+  UseInterceptors,
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
@@ -36,13 +38,14 @@ export class ResultsController {
   constructor(private readonly service: ResultsService) {}
 
   @Get(':salmon_id')
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiParam({ name: 'salmon_id', type: 'integer', description: 'リザルトID' })
   @ApiTags('リザルト')
   @ApiOperation({ operationId: '取得' })
   @ApiNotFoundResponse()
   find(
     @Param('salmon_id', ParseIntPipe) salmonId: number,
-  ): Promise<ResultModel> {
+  ): Promise<Partial<ResultModel>> {
     return this.service.find(salmonId);
   }
 

@@ -21,17 +21,60 @@ const { transpose } = require('matrix-transpose');
 export class ResultsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async find(salmonId: number): Promise<ResultModel> {
-    return this.prisma.result
-      .findUnique({
+  async find(salmonId: number): Promise<Partial<ResultModel>> {
+    try {
+      return await this.prisma.result.findUnique({
         where: {
           salmonId: salmonId,
         },
+        select: {
+          salmonId: true,
+          bossCounts: true,
+          bossKillCounts: true,
+          dangerRate: true,
+          startTime: true,
+          playTime: true,
+          endTime: true,
+          jobResult: {
+            select: {
+              failureReason: true,
+              failureWave: true,
+              isClear: true,
+            },
+          },
+          players: {
+            select: {
+              name: true,
+              nsaid: true,
+              bossKillCounts: true,
+              deadCount: true,
+              goldenIkuraNum: true,
+              helpCount: true,
+              ikuraNum: true,
+              gradeId: true,
+              gradePoint: true,
+              gradePointDelta: true,
+              specialId: true,
+              specialCounts: true,
+              weaponList: true,
+            },
+          },
+          waves: {
+            select: {
+              waterLevel: true,
+              eventType: true,
+              ikuraNum: true,
+              goldenIkuraNum: true,
+              goldenIkuraPopNum: true,
+              quotaNum: true,
+            },
+          },
+        },
         rejectOnNotFound: true,
-      })
-      .catch((error) => {
-        throw new NotFoundException();
       });
+    } catch (error) {
+      throw new NotFoundException();
+    }
   }
 
   async findMany(query: PaginatedRequestDtoForResult): Promise<ResultModel[]> {
@@ -159,12 +202,12 @@ export class ResultsService {
               quotaNum: wave.quota_num,
               failureReason:
                 result.job_result.failure_wave ==
-                result.wave_details.indexOf(wave)
+                result.wave_details.indexOf(wave) + 1
                   ? result.job_result.failure_reason.valueOf()
                   : null,
               isClear: !(
                 result.job_result.failure_wave ==
-                result.wave_details.indexOf(wave)
+                result.wave_details.indexOf(wave) + 1
               ),
             };
           }),
