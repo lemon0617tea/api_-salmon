@@ -15,6 +15,8 @@ import {
   WaterLevel,
 } from '../dto/result.request.dto';
 import dayjs from 'dayjs';
+import { Status, UploadResult } from './results.status';
+import { resolve } from 'path';
 const { transpose } = require('matrix-transpose');
 
 @Injectable()
@@ -84,12 +86,6 @@ export class ResultsService {
     });
   }
 
-  countingArrayValue(value: BossCounts) {
-    return Object.values(value).map((x) => {
-      return x.count;
-    });
-  }
-
   // 同じリザルトを別の人がアップロードしたときにプレイヤーデータを更新する
   // 基本的には同じはずだが、回線落ちしたときなどの対策
   async updatePlayerResult() {}
@@ -137,7 +133,7 @@ export class ResultsService {
       ),
     ).map((value) => value.reduce((prev, next) => prev + next, 0));
     const members = players.map((player) => player.pid).sort();
-    await this.prisma.result.create({
+    const response = await this.prisma.result.create({
       data: {
         bossCounts: boss_counts,
         bossKillCounts: boss_kill_counts,
@@ -214,7 +210,7 @@ export class ResultsService {
         },
       },
     });
-    return 0;
+    return response.salmonId;
   }
 
   async updateResult(
@@ -255,16 +251,19 @@ export class ResultsService {
     }
   }
 
-  async create(request: UploadedResultsModel) {
-    request.results.forEach(async (result) => {
-      const salmonId = await this.getResultSalmonId(result);
-      if (salmonId === null) {
-        console.log('Create result');
-        this.createResult(result);
-      } else {
-        console.log('Update result');
-        this.updateResult(salmonId, result);
-      }
-    });
+  async create(request: UploadedResultsModel): Promise<UploadResult[]> {
+    const results = await Promise.all(
+      request.results.map(async (result) => {
+        const salmonId = await this.getResultSalmonId(result);
+        if (salmonId == null) {
+          const salmonId = await this.createResult(result);
+          return new UploadResult(salmonId, Status.Created);
+        } else {
+          await this.updateResult(salmonId, result);
+          return new UploadResult(salmonId, Status.Updated);
+        }
+      }),
+    );
+    return results;
   }
 }
