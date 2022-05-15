@@ -117,12 +117,5 @@ class Salmonia:
         result = self.__get_result(result_id)
         url = f"http://localhost:3000/v1/results"
         parameters = {"results": [result]}
-        response = session.post(url, json=parameters)
-        print(response.text)
+        response = UploadResults.from_json(session.post(url, json=parameters).text)
         return response
-
-
-def upload(result: dict):
-    url = "localhost:3000/v1/results"
-    # headers = {'Content-Type': 'application/json'}
-    # response = requests.post(url, data=json.dumps({"results": results}), headers=headers)

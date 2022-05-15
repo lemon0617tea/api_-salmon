@@ -31,7 +31,7 @@ import {
 } from 'src/dto/pagination.dto';
 import { Results as UploadedResultsModel } from '../dto/result.request.dto';
 import { ResultsService } from './results.service';
-import { UploadResult } from './results.status';
+import { UploadResult, UploadResults } from './results.status';
 
 @Controller('results')
 @ApiExtraModels(PaginatedDto)
@@ -88,7 +88,7 @@ export class ResultsController {
   create(
     @Body(new ValidationPipe({ transform: true }))
     request: UploadedResultsModel,
-  ): Promise<UploadResult[]> {
+  ): Promise<UploadResults> {
     return this.service.create(request);
   }
 

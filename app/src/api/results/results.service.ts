@@ -15,7 +15,7 @@ import {
   WaterLevel,
 } from '../dto/result.request.dto';
 import dayjs from 'dayjs';
-import { Status, UploadResult } from './results.status';
+import { Status, UploadResult, UploadResults } from './results.status';
 import { resolve } from 'path';
 const { transpose } = require('matrix-transpose');
 
@@ -251,7 +251,7 @@ export class ResultsService {
     }
   }
 
-  async create(request: UploadedResultsModel): Promise<UploadResult[]> {
+  async create(request: UploadedResultsModel): Promise<UploadResults> {
     const results = await Promise.all(
       request.results.map(async (result) => {
         const salmonId = await this.getResultSalmonId(result);
@@ -264,6 +264,6 @@ export class ResultsService {
         }
       }),
     );
-    return results;
+    return new UploadResults(results);
   }
 }
