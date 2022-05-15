@@ -38,3 +38,7 @@ lerna-debug.log*
 migrations
 .env
 docker-compose.yml
+
+# Python
+
+__pycache__
