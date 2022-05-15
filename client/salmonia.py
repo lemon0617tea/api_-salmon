@@ -6,12 +6,35 @@ import requests
 import json
 import iksm
 import sys
+import os
 from enum import Enum
 
 
 class Status(Enum):
     CREATED = "created"
     UPDATED = "updated"
+
+
+class APIVersion(Enum):
+    V1 = "v1"
+    V2 = "v2"
+
+
+class Environment(Enum):
+    Development = "Development"
+    Production = "Production"
+    Sandbox = "Sandbox"
+    Local = "Local"
+
+    def url(self) -> str:
+        if self == Environment.Production:
+            return "https://api.splatnet2.com/v1"
+        elif self == Environment.Development:
+            return "https://api-dev.splatnet2.com/v1"
+        elif self == Environment.Sandbox:
+            return "https://api-sandbox.splatnet2.com/v1"
+        elif self == Environment.Local:
+            return "http://localhost:3000/v1"
 
 
 @dataclass_json
@@ -72,6 +95,7 @@ class Results:
 
 
 session = requests.Session()
+environment = Environment.Local
 
 
 class Salmonia:
@@ -79,7 +103,7 @@ class Salmonia:
     version = iksm.get_app_version()
 
     def __init__(self):
-        print(f"Salmonia v{self.version} for Splatoon 2")
+        print(f"Salmonia v{self.version} for Splatoon 2 ({environment.value})")
         try:
             self.userinfo = iksm.load()
             print(self.userinfo)
@@ -115,7 +139,8 @@ class Salmonia:
 
     def upload_result(self, result_id):
         result = self.__get_result(result_id)
-        url = f"http://localhost:3000/v1/results"
+        url = f"{environment.url()}/results"
         parameters = {"results": [result]}
         response = UploadResults.from_json(session.post(url, json=parameters).text)
-        return response
+        for result in response.results:
+            print(f"Uploaded {result.salmon_id} => {result.status.value}")
