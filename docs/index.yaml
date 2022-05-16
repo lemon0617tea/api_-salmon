@@ -1,6 +1,6 @@
 openapi: 3.0.0
 paths:
-  /v1/users:
+  /users:
     get:
       operationId: UsersController_findMany
       parameters:
@@ -17,7 +17,7 @@ paths:
       responses:
         '200':
           description: ''
-  /v1/users/{user_id}:
+  /users/{user_id}:
     get:
       operationId: UsersController_find
       parameters:
@@ -31,7 +31,7 @@ paths:
           description: ''
         '404':
           description: ''
-  /v1/results/{salmon_id}:
+  /results/{salmon_id}:
     get:
       operationId: 取得
       summary: ''
@@ -77,7 +77,7 @@ paths:
           description: ''
       tags:
         - リザルト
-  /v1/results:
+  /results:
     get:
       operationId: 一括取得
       summary: ''
@@ -134,7 +134,7 @@ paths:
           description: ''
       tags:
         - リザルト
-  /v1/results/schedules/{schedule_id}:
+  /results/schedules/{schedule_id}:
     get:
       operationId: スケジュール指定
       summary: ''
@@ -180,7 +180,7 @@ paths:
           description: ''
       tags:
         - リザルト一覧
-  /v1/results/users/{nsaid}:
+  /results/users/{nsaid}:
     get:
       operationId: プレイヤー指定
       summary: ''
@@ -212,7 +212,7 @@ paths:
           description: ''
       tags:
         - リザルト一覧
-  /v1/ranking/schedules/{schedule_id}:
+  /ranking/schedules/{schedule_id}:
     get:
       operationId: 取得
       summary: ''
@@ -228,7 +228,7 @@ paths:
           description: ''
       tags:
         - ランキング
-  /v1/schedules/{schedule_id}/stats:
+  /schedules/{schedule_id}/stats:
     get:
       operationId: 統計取得
       summary: ''
@@ -244,7 +244,7 @@ paths:
           description: ''
       tags:
         - スケジュール
-  /v1/schedules:
+  /schedules:
     get:
       operationId: 取得
       summary: ''
