@@ -2,13 +2,9 @@
 up:
 	docker-compose up
 
-.PHONY: db
-db:
-	docker-compose -f docker-compose-db.yml up
-
-.PHONY: app
-app:
-	docker-compose -f docker-compose-app.yml up
+.PHONY: build
+build:
+	docker-compose build
 
 .PHONY: down
 down:

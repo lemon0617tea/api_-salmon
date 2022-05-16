@@ -29,6 +29,6 @@ async function bootstrap() {
     exec(`npx redoc-cli build ${output}.json -o ${output}.html`);
   }
   SwaggerModule.setup('documents', app, documents);
-  await app.listen(5000);
+  await app.listen(3000);
 }
 bootstrap();
