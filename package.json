@@ -14,7 +14,7 @@
     "start:debug": "nest start --debug --watch",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "generate:prisma": "npx prisma migrate dev --name init",
-    "start:prod": "npm run generate:prisma && npm run dist/main",
+    "start:prod": "node dist/main",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
