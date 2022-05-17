@@ -19,18 +19,34 @@ services:
     container_name: salmon_stats_migration
     build:
       context: ./app
+    ports:
+      - $STUDIO_PORT:$STUDIO_PORT
     depends_on:
       db:
         condition: service_healthy
-    command: [sh, -c, yarn prisma migrate deploy]
+    command:
+      [
+        sh,
+        -c,
+        yarn prisma generate,
+        yarn prisma migrate deploy,
+        yarn prisma studio,
+      ]
+
+  hash:
+    container_name: salmon_stats_hash
+    build:
+      context: ./hash
+    ports:
+      - $NODE_PORT:$NODE_PORT
 
   app:
     container_name: salmon_stats_app
     build:
       context: ./app
     ports:
-      - 5000:5000
+      - $NODE_PORT:$NODE_PORT
     depends_on:
       migration:
         condition: service_completed_successfully
-    command: [sh, -c, yarn build && yarn start:prod]
+    command: [sh, -c, yarn prisma generate && yarn build && yarn start:prod]

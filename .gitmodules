@@ -1,0 +1,4 @@
+[submodule "hash"]
+	path = hash
+	url = git@github.com:SalmonStats/hash.git
+	branch = app
