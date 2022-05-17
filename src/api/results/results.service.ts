@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { Prisma, Result as ResultModel } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
-import { PaginatedRequestDtoForResult } from 'src/dto/pagination.dto';
 import {
   BossCounts,
   EventType,
@@ -17,6 +16,7 @@ import {
 import dayjs from 'dayjs';
 import { Status, UploadResult, UploadResults } from './results.status';
 import { resolve } from 'path';
+import { PaginatedRequestDtoForResult } from '../dto/pagination.dto';
 const { transpose } = require('matrix-transpose');
 
 @Injectable()
@@ -122,15 +122,15 @@ export class ResultsService {
 
   async createResult(result: UploadedResultModel): Promise<number> {
     const boss_counts: number[] = Object.values(result.boss_counts).map(
-      (value) => value.count,
+      (value) => value.count
     );
     const players: PlayerResult[] = result.other_results.concat([
       result.my_result,
     ]);
     const boss_kill_counts = transpose(
       players.map((player) =>
-        Object.values(player.boss_kill_counts).map((value) => value.count),
-      ),
+        Object.values(player.boss_kill_counts).map((value) => value.count)
+      )
     ).map((value) => value.reduce((prev, next) => prev + next, 0));
     const members = players.map((player) => player.pid).sort();
     const response = await this.prisma.result.create({
@@ -154,7 +154,7 @@ export class ResultsService {
               name: player.name,
               nsaid: player.pid,
               bossKillCounts: Object.values(player.boss_kill_counts).map(
-                (value) => value.count,
+                (value) => value.count
               ),
               deadCount: player.dead_count,
               helpCount: player.help_count,
@@ -190,7 +190,7 @@ export class ResultsService {
               waveId: result.wave_details.indexOf(wave),
               eventType: Object.values(EventType).indexOf(wave.event_type.key),
               waterLevel: Object.values(WaterLevel).indexOf(
-                wave.water_level.key,
+                wave.water_level.key
               ),
               goldenIkuraNum: wave.golden_ikura_num,
               goldenIkuraPopNum: wave.golden_ikura_pop_num,
@@ -215,7 +215,7 @@ export class ResultsService {
 
   async updateResult(
     salmonId: number,
-    result: UploadedResultModel,
+    result: UploadedResultModel
   ): Promise<number> {
     try {
       return (
@@ -262,7 +262,7 @@ export class ResultsService {
           await this.updateResult(salmonId, result);
           return new UploadResult(salmonId, Status.Updated);
         }
-      }),
+      })
     );
     return new UploadResults(results);
   }

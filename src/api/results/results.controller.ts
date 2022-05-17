@@ -28,7 +28,7 @@ import {
   PaginatedDto,
   PaginatedRequestDto,
   PaginatedRequestDtoForResult,
-} from 'src/dto/pagination.dto';
+} from '../dto/pagination.dto';
 import { Results as UploadedResultsModel } from '../dto/result.request.dto';
 import { ResultsService } from './results.service';
 import { UploadResult, UploadResults } from './results.status';
@@ -45,7 +45,7 @@ export class ResultsController {
   @ApiOperation({ operationId: '取得' })
   @ApiNotFoundResponse()
   find(
-    @Param('salmon_id', ParseIntPipe) salmonId: number,
+    @Param('salmon_id', ParseIntPipe) salmonId: number
   ): Promise<Partial<ResultModel>> {
     return this.service.find(salmonId);
   }
@@ -63,7 +63,7 @@ export class ResultsController {
   @ApiOperation({ operationId: 'スケジュール指定' })
   @ApiNotFoundResponse()
   findManyByScheduleId(
-    @Query() query: PaginatedRequestDtoForResult,
+    @Query() query: PaginatedRequestDtoForResult
   ): Promise<ResultModel[]> {
     return;
   }
@@ -74,7 +74,7 @@ export class ResultsController {
   @ApiNotFoundResponse()
   findManyByUser(
     @Param('nsaid') nsaid: string,
-    @Query() query: PaginatedRequestDto,
+    @Query() query: PaginatedRequestDto
   ): Promise<ResultModel[]> {
     return this.service.findMany(query);
   }
@@ -87,7 +87,7 @@ export class ResultsController {
   // @ApiBody({ type: UploadedResultsModel })
   create(
     @Body(new ValidationPipe({ transform: true }))
-    request: UploadedResultsModel,
+    request: UploadedResultsModel
   ): Promise<UploadResults> {
     return this.service.create(request);
   }

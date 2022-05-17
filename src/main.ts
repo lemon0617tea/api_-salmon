@@ -19,7 +19,7 @@ async function bootstrap() {
     .build();
   const documents = SwaggerModule.createDocument(app, options);
   if (process.env.NODE_ENV !== 'production') {
-    const build = path.resolve(process.cwd(), '../docs');
+    const build = path.resolve(process.cwd(), 'docs');
     const output = path.resolve(build, 'index');
     mkdir(build, { recursive: true }, (_) => {});
     writeFileSync(`${output}.json`, JSON.stringify(documents), {
