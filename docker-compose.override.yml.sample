@@ -1,40 +1,36 @@
 version: "3.8"
 services:
-    # app:
-    #     container_name: salmon_stats_app
-    #     build:
-    #         context: ./app
-    #     ports:
-    #         - "5000:5000"
-    #     depends_on: 
-    #         - db
-    #     networks:
-    #         - salmon_stats_network
-    # server:
-    #     container_name: salmon_stats_server
-    #     restart: always
-    #     build:
-    #         context: ./nginx
-    #     ports:
-    #         - 443:443
-    #         - 80:80
-    #     networks:
-    #         - salmon_stats_network
-    #     depends_on:
-    #         - app
-    db:
-        image: postgres:14.2
-        container_name: salmon_stats_db
-        # build:
-        #   context: ./db
-        ports:
-          - 5432:5432
-        environment:
-          POSTGRES_USER: $POSTGRES_USER
-          POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-          POSTGRES_DB: $POSTGRES_DATABASE
+  db:
+    image: postgres:14.2
+    container_name: salmon_stats_db
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: $POSTGRES_DB
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "ubuntu"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-networks: 
-  salmon_stats_network:
-    external: true
+  migration:
+    container_name: salmon_stats_migration
+    build:
+      context: ./app
+    depends_on:
+      db:
+        condition: service_healthy
+    command: [sh, -c, yarn prisma migrate deploy]
 
+  app:
+    container_name: salmon_stats_app
+    build:
+      context: ./app
+    ports:
+      - 5000:5000
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+    command: [sh, -c, yarn build && yarn start:prod]
