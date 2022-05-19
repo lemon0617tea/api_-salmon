@@ -25,6 +25,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import {
+  ApiPaginatedResponse,
   PaginatedDto,
   PaginatedRequestDto,
   PaginatedRequestDtoForResult,
@@ -32,6 +33,7 @@ import {
 import { Results as UploadedResultsModel } from '../dto/result.request.dto';
 import { ResultsService } from './results.service';
 import { UploadResult, UploadResults } from './results.status';
+import { Result as ResultDto } from '../dto/result.response.dto';
 
 @Controller('results')
 @ApiExtraModels(PaginatedDto)
@@ -44,17 +46,20 @@ export class ResultsController {
   @ApiTags('リザルト')
   @ApiOperation({ operationId: '取得' })
   @ApiNotFoundResponse()
-  find(
-    @Param('salmon_id', ParseIntPipe) salmonId: number
-  ): Promise<Partial<ResultModel>> {
+  find(@Param('salmon_id', ParseIntPipe) salmonId: number): Promise<ResultDto> {
     return this.service.find(salmonId);
   }
 
   @Get('')
   @ApiTags('リザルト')
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({ operationId: '一括取得' })
-  findMany(@Query() query: PaginatedRequestDtoForResult): Promise<ResultModel> {
-    return;
+  @ApiPaginatedResponse(ResultDto)
+  findMany(
+    @Query(new ValidationPipe({ transform: true }))
+    query: PaginatedRequestDtoForResult
+  ): Promise<PaginatedDto<ResultDto>> {
+    return this.service.findMany(query);
   }
 
   @Get('schedules/:schedule_id')
@@ -74,9 +79,9 @@ export class ResultsController {
   @ApiNotFoundResponse()
   findManyByUser(
     @Param('nsaid') nsaid: string,
-    @Query() query: PaginatedRequestDto
+    @Query(new ValidationPipe({ transform: true })) query: PaginatedRequestDto
   ): Promise<ResultModel[]> {
-    return this.service.findMany(query);
+    return;
   }
 
   @Post('')

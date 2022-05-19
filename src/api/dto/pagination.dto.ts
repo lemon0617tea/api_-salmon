@@ -12,26 +12,29 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 import { Expose, Transform } from 'class-transformer';
+import { IsInt } from 'class-validator';
 
 export class PaginatedRequestDto {
   @Expose()
-  @Transform((params) => parseInt(params.value, 10))
+  @Transform((params) => parseInt(params.value || 0, 10))
+  @IsInt()
   @ApiProperty({
     title: 'offset',
     minimum: 0,
     default: 0,
   })
-  readonly offset: number = 0;
+  readonly offset: number;
 
   @Expose()
-  @Transform((params) => parseInt(params.value, 10))
+  @Transform((params) => parseInt(params.value || 25, 10))
+  @IsInt()
   @ApiProperty({
     title: 'limit',
     minimum: 0,
     maximum: 200,
     default: 25,
   })
-  readonly limit: number = 25;
+  readonly limit: number;
 }
 
 export class PaginatedRequestDtoForResult extends PaginatedRequestDto {
@@ -57,7 +60,7 @@ export class PaginatedDto<T> {
 }
 
 export const ApiPaginatedResponse = <TModel extends Type<any>>(
-  model: TModel,
+  model: TModel
 ) => {
   return applyDecorators(
     ApiOkResponse({
@@ -75,6 +78,6 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(
           },
         ],
       },
-    }),
+    })
   );
 };

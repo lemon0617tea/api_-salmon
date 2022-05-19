@@ -15,10 +15,12 @@ import {
 } from '../dto/result.request.dto';
 import dayjs from 'dayjs';
 import { Status, UploadResult, UploadResults } from './results.status';
-import { resolve } from 'path';
-import { PaginatedRequestDtoForResult } from '../dto/pagination.dto';
-import { classToPlain, plainToClass } from 'class-transformer';
-import { Result } from '../dto/result.response.dto';
+import {
+  PaginatedDto,
+  PaginatedRequestDtoForResult,
+} from '../dto/pagination.dto';
+import { plainToClass } from 'class-transformer';
+import { Result as ResultDto } from '../dto/result.response.dto';
 const { transpose } = require('matrix-transpose');
 const snakecaseKeys = require('snakecase-keys');
 
@@ -26,7 +28,14 @@ const snakecaseKeys = require('snakecase-keys');
 export class ResultsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async find(salmonId: number): Promise<Partial<ResultModel>> {
+  convertToJSON(result: ResultModel): ResultDto {
+    return plainToClass(ResultDto, snakecaseKeys, {
+      excludeExtraneousValues: true,
+      exposeUnsetFields: false,
+    });
+  }
+
+  async find(salmonId: number): Promise<ResultDto> {
     try {
       const result = await this.prisma.result.findUnique({
         where: {
@@ -39,7 +48,7 @@ export class ResultsService {
         },
         rejectOnNotFound: true,
       });
-      return plainToClass(Result, snakecaseKeys(result), {
+      return plainToClass(ResultDto, snakecaseKeys(result), {
         excludeExtraneousValues: true,
         exposeUnsetFields: false,
       });
@@ -49,11 +58,29 @@ export class ResultsService {
     }
   }
 
-  async findMany(query: PaginatedRequestDtoForResult): Promise<ResultModel[]> {
-    return this.prisma.result.findMany({
-      take: Number(query.limit),
-      skip: Number(query.offset),
+  async findMany(
+    query: PaginatedRequestDtoForResult
+  ): Promise<PaginatedDto<ResultDto>> {
+    console.log(query);
+    const response = new PaginatedDto<ResultDto>();
+    const results = this.prisma.result.findMany({
+      take: query.limit,
+      skip: query.offset,
+      include: {
+        players: true,
+        waves: true,
+        jobResult: true,
+      },
     });
+    response.limit = query.limit;
+    response.offset = query.offset;
+    response.results = (await results).map((result) =>
+      plainToClass(ResultDto, snakecaseKeys(result), {
+        excludeExtraneousValues: true,
+        exposeUnsetFields: false,
+      })
+    );
+    return response;
   }
 
   // 同じリザルトを別の人がアップロードしたときにプレイヤーデータを更新する
