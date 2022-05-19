@@ -17,7 +17,10 @@ import dayjs from 'dayjs';
 import { Status, UploadResult, UploadResults } from './results.status';
 import { resolve } from 'path';
 import { PaginatedRequestDtoForResult } from '../dto/pagination.dto';
+import { classToPlain, plainToClass } from 'class-transformer';
+import { Result } from '../dto/result.response.dto';
 const { transpose } = require('matrix-transpose');
+const snakecaseKeys = require('snakecase-keys');
 
 @Injectable()
 export class ResultsService {
@@ -25,56 +28,23 @@ export class ResultsService {
 
   async find(salmonId: number): Promise<Partial<ResultModel>> {
     try {
-      return await this.prisma.result.findUnique({
+      const result = await this.prisma.result.findUnique({
         where: {
           salmonId: salmonId,
         },
-        select: {
-          salmonId: true,
-          bossCounts: true,
-          bossKillCounts: true,
-          dangerRate: true,
-          startTime: true,
-          playTime: true,
-          endTime: true,
-          jobResult: {
-            select: {
-              failureReason: true,
-              failureWave: true,
-              isClear: true,
-            },
-          },
-          players: {
-            select: {
-              name: true,
-              nsaid: true,
-              bossKillCounts: true,
-              deadCount: true,
-              goldenIkuraNum: true,
-              helpCount: true,
-              ikuraNum: true,
-              gradeId: true,
-              gradePoint: true,
-              gradePointDelta: true,
-              specialId: true,
-              specialCounts: true,
-              weaponList: true,
-            },
-          },
-          waves: {
-            select: {
-              waterLevel: true,
-              eventType: true,
-              ikuraNum: true,
-              goldenIkuraNum: true,
-              goldenIkuraPopNum: true,
-              quotaNum: true,
-            },
-          },
+        include: {
+          players: true,
+          waves: true,
+          jobResult: true,
         },
         rejectOnNotFound: true,
       });
+      return plainToClass(Result, snakecaseKeys(result), {
+        excludeExtraneousValues: true,
+        exposeUnsetFields: false,
+      });
     } catch (error) {
+      console.log(error);
       throw new NotFoundException();
     }
   }

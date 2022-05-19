@@ -4,7 +4,7 @@ dev:
 
 .PHONY: prod
 prod:
-	NODE_ENV=production yarn start:prod
+	NODE_ENV=production yarn start:dev
 
 .PHONY: init
 init:
