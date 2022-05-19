@@ -1,0 +1,591 @@
+openapi: 3.0.0
+paths:
+  /users:
+    get:
+      operationId: UsersController_findMany
+      parameters:
+        - name: offset
+          required: true
+          in: query
+          schema:
+            type: number
+        - name: limit
+          required: true
+          in: query
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+  /users/{user_id}:
+    get:
+      operationId: UsersController_find
+      parameters:
+        - name: nsaid
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+        '404':
+          description: ''
+  /results/{salmon_id}:
+    get:
+      operationId: 取得
+      summary: ''
+      parameters:
+        - name: salmon_id
+          required: true
+          in: path
+          description: リザルトID
+          schema:
+            type: integer
+      responses:
+        '404':
+          description: ''
+      tags:
+        - リザルト
+    put:
+      operationId: 更新
+      summary: ''
+      parameters:
+        - name: salmon_id
+          required: true
+          in: path
+          description: リザルトID
+          schema:
+            type: integer
+      responses:
+        '404':
+          description: ''
+      tags:
+        - リザルト
+    delete:
+      operationId: 削除
+      summary: ''
+      parameters:
+        - name: salmon_id
+          required: true
+          in: path
+          description: リザルトID
+          schema:
+            type: integer
+      responses:
+        '404':
+          description: ''
+      tags:
+        - リザルト
+  /results:
+    get:
+      operationId: 一括取得
+      summary: ''
+      parameters:
+        - name: offset
+          required: true
+          in: query
+          schema:
+            minimum: 0
+            title: offset
+            default: 0
+            type: number
+        - name: limit
+          required: true
+          in: query
+          schema:
+            minimum: 0
+            maximum: 200
+            title: limit
+            default: 25
+            type: number
+        - name: is_clear
+          required: false
+          in: query
+          description: クリアしたリザルトのみ
+          schema:
+            title: ''
+            default: false
+            type: boolean
+        - name: nsaid
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - リザルト
+    post:
+      operationId: 登録
+      summary: ''
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Results'
+      responses:
+        '200':
+          description: ''
+        '400':
+          description: ''
+      tags:
+        - リザルト
+  /results/schedules/{schedule_id}:
+    get:
+      operationId: スケジュール指定
+      summary: ''
+      parameters:
+        - name: offset
+          required: true
+          in: query
+          schema:
+            minimum: 0
+            title: offset
+            default: 0
+            type: number
+        - name: limit
+          required: true
+          in: query
+          schema:
+            minimum: 0
+            maximum: 200
+            title: limit
+            default: 25
+            type: number
+        - name: is_clear
+          required: false
+          in: query
+          description: クリアしたリザルトのみ
+          schema:
+            title: ''
+            default: false
+            type: boolean
+        - name: nsaid
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: schedule_id
+          required: true
+          in: path
+          description: シフトID
+          schema:
+            type: integer
+      responses:
+        '404':
+          description: ''
+      tags:
+        - リザルト一覧
+  /results/users/{nsaid}:
+    get:
+      operationId: プレイヤー指定
+      summary: ''
+      parameters:
+        - name: nsaid
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: offset
+          required: true
+          in: query
+          schema:
+            minimum: 0
+            title: offset
+            default: 0
+            type: number
+        - name: limit
+          required: true
+          in: query
+          schema:
+            minimum: 0
+            maximum: 200
+            title: limit
+            default: 25
+            type: number
+      responses:
+        '404':
+          description: ''
+      tags:
+        - リザルト一覧
+  /ranking/schedules/{schedule_id}:
+    get:
+      operationId: 取得
+      summary: ''
+      parameters:
+        - name: schedule_id
+          required: true
+          in: path
+          description: シフトID
+          schema:
+            type: integer
+      responses:
+        '404':
+          description: ''
+      tags:
+        - ランキング
+  /schedules/{schedule_id}/stats:
+    get:
+      operationId: 統計取得
+      summary: ''
+      parameters:
+        - name: schedule_id
+          required: true
+          in: path
+          description: シフトID
+          schema:
+            type: integer
+      responses:
+        '404':
+          description: ''
+      tags:
+        - スケジュール
+  /schedules:
+    get:
+      operationId: 取得
+      summary: ''
+      description: スケジュールを取得します
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - スケジュール
+    post:
+      operationId: 追加
+      summary: ''
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - スケジュール
+info:
+  title: Salmon Stats API Documents
+  description: ''
+  version: 1.0.0
+  contact: {}
+tags: []
+servers: []
+components:
+  schemas:
+    PaginatedDto:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: 総数
+        limit:
+          type: integer
+          description: 取得数
+        offset:
+          type: integer
+          description: オフセット
+      required:
+        - total
+        - limit
+        - offset
+    EnumType:
+      type: object
+      properties:
+        key:
+          type: string
+        name:
+          type: string
+      required:
+        - key
+        - name
+    BossCount:
+      type: object
+      properties:
+        boss:
+          $ref: '#/components/schemas/EnumType'
+        count:
+          type: number
+      required:
+        - boss
+        - count
+    BossCounts:
+      type: object
+      properties:
+        '3':
+          $ref: '#/components/schemas/BossCount'
+        '6':
+          $ref: '#/components/schemas/BossCount'
+        '9':
+          $ref: '#/components/schemas/BossCount'
+        '12':
+          $ref: '#/components/schemas/BossCount'
+        '13':
+          $ref: '#/components/schemas/BossCount'
+        '14':
+          $ref: '#/components/schemas/BossCount'
+        '15':
+          $ref: '#/components/schemas/BossCount'
+        '16':
+          $ref: '#/components/schemas/BossCount'
+        '21':
+          $ref: '#/components/schemas/BossCount'
+      required:
+        - '3'
+        - '6'
+        - '9'
+        - '12'
+        - '13'
+        - '14'
+        - '15'
+        - '16'
+        - '21'
+    Grade:
+      type: object
+      properties:
+        id:
+          type: number
+        long_name:
+          type: string
+        short_name:
+          type: string
+      required:
+        - id
+        - long_name
+        - short_name
+    JobResult:
+      type: object
+      properties:
+        failure_wave:
+          type: number
+          example: 1
+        failure_reason:
+          type: string
+          enum:
+            - time_limit
+            - wipe_out
+          example: time_limit
+        is_clear:
+          type: boolean
+          example: false
+      required:
+        - failure_wave
+        - failure_reason
+        - is_clear
+    PlayerType:
+      type: object
+      properties:
+        style:
+          type: string
+          enum:
+            - girl
+            - boy
+        species:
+          type: string
+          enum:
+            - inklings
+            - octolings
+      required:
+        - style
+        - species
+    Special:
+      type: object
+      properties:
+        id:
+          type: number
+        image_a:
+          type: string
+        image_b:
+          type: string
+      required:
+        - id
+        - image_a
+        - image_b
+    Weapon:
+      type: object
+      properties:
+        id:
+          type: number
+        image:
+          type: string
+        name:
+          type: string
+        thumbnail:
+          type: string
+      required:
+        - id
+        - image
+        - name
+        - thumbnail
+    WeaponList:
+      type: object
+      properties:
+        id:
+          type: number
+        weapon:
+          $ref: '#/components/schemas/Weapon'
+      required:
+        - id
+        - weapon
+    PlayerResult:
+      type: object
+      properties:
+        boss_kill_counts:
+          $ref: '#/components/schemas/BossCounts'
+        dead_count:
+          type: number
+        golden_ikura_num:
+          type: number
+        help_count:
+          type: number
+        ikura_num:
+          type: number
+        name:
+          type: string
+        pid:
+          type: string
+        player_type:
+          $ref: '#/components/schemas/PlayerType'
+        special:
+          $ref: '#/components/schemas/Special'
+        weapon_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/WeaponList'
+        special_counts:
+          type: array
+          items:
+            type: string
+      required:
+        - boss_kill_counts
+        - dead_count
+        - golden_ikura_num
+        - help_count
+        - ikura_num
+        - name
+        - pid
+        - player_type
+        - special
+        - weapon_list
+        - special_counts
+    EnumImageType:
+      type: object
+      properties:
+        image:
+          type: object
+        name:
+          type: string
+      required:
+        - image
+        - name
+    Schedule:
+      type: object
+      properties:
+        start_time:
+          format: date-time
+          type: string
+        end_time:
+          format: date-time
+          type: string
+        stage:
+          $ref: '#/components/schemas/EnumImageType'
+      required:
+        - start_time
+        - end_time
+        - stage
+    WaveResult:
+      type: object
+      properties:
+        water_level:
+          $ref: '#/components/schemas/EnumType'
+        event_type:
+          $ref: '#/components/schemas/EnumType'
+        golden_ikura_num:
+          type: number
+        golden_ikura_pop_num:
+          type: number
+        ikura_num:
+          type: number
+        quota_num:
+          type: number
+      required:
+        - water_level
+        - event_type
+        - golden_ikura_num
+        - golden_ikura_pop_num
+        - ikura_num
+        - quota_num
+    Result:
+      type: object
+      properties:
+        boss_counts:
+          $ref: '#/components/schemas/BossCounts'
+        danger_rate:
+          type: number
+        end_time:
+          format: date-time
+          type: string
+        grade:
+          $ref: '#/components/schemas/Grade'
+        grade_point:
+          type: number
+        grade_point_delta:
+          type: number
+        job_id:
+          type: number
+        job_rate:
+          type: number
+        job_result:
+          $ref: '#/components/schemas/JobResult'
+        job_score:
+          type: number
+        kuma_point:
+          type: number
+        my_result:
+          $ref: '#/components/schemas/PlayerResult'
+        other_results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlayerResult'
+        play_time:
+          format: date-time
+          type: string
+        player_type:
+          $ref: '#/components/schemas/PlayerType'
+        schedule:
+          $ref: '#/components/schemas/Schedule'
+        start_time:
+          format: date-time
+          type: string
+        wave_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/WaveResult'
+      required:
+        - boss_counts
+        - danger_rate
+        - end_time
+        - grade
+        - grade_point
+        - grade_point_delta
+        - job_id
+        - job_rate
+        - job_result
+        - job_score
+        - kuma_point
+        - my_result
+        - other_results
+        - play_time
+        - player_type
+        - schedule
+        - start_time
+        - wave_details
+    Results:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Result'
+      required:
+        - results
