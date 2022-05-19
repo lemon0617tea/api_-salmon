@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { Prisma, Result as ResultModel } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
@@ -130,6 +131,9 @@ export class ResultsService {
       )
     ).map((value) => value.reduce((prev, next) => prev + next, 0));
     const members = players.map((player) => player.pid).sort();
+    if (new Set(members).size !== members.length) {
+      throw new BadRequestException();
+    }
     const response = await this.prisma.result.create({
       data: {
         bossCounts: boss_counts,
