@@ -65,30 +65,39 @@ export class Player implements PlayerResultType {
   @Expose()
   @ApiProperty()
   nsaid: string;
+
   @Expose()
   @ApiProperty()
   name: string;
+
   @Expose()
   @ApiProperty()
   boss_kill_counts: number[];
+
   @Expose()
   @ApiProperty()
   dead_count: number;
+
   @Expose()
   @ApiProperty()
   golden_ikura_num: number;
+
   @Expose()
   @ApiProperty()
   help_count: number;
+
   @Expose()
   @ApiProperty()
   ikura_num: number;
+
   @Expose()
   @ApiProperty()
   special_id: number;
+
   @Expose()
   @ApiProperty()
   special_counts: number[];
+
   @Expose()
   @ApiProperty()
   weapon_list: number[];
@@ -97,12 +106,16 @@ export class Player implements PlayerResultType {
 export class Schedule {
   @ApiProperty()
   start_time: number;
+
   @ApiProperty()
   stage_id: StageType;
+
   @ApiProperty()
   end_time: number;
+
   @ApiProperty()
   rare_weapon: number;
+
   @ApiProperty()
   weapon_list: number[];
 }
@@ -111,9 +124,11 @@ export class JobResult {
   @Expose()
   @ApiProperty()
   failure_reason: FailureReason;
+
   @Expose()
   @ApiProperty()
   failure_wave: number;
+
   @Expose()
   @ApiProperty()
   is_clear: boolean;
@@ -123,39 +138,50 @@ export class Result {
   @Expose()
   @ApiProperty()
   salmon_id: number;
+
   @Expose()
   @ApiProperty()
   boss_counts: number[];
+
   @Expose()
   @ApiProperty()
   boss_kill_counts: number[];
+
   @Expose()
   @ApiProperty()
   danger_rate: number;
+
   @Expose()
   @ApiProperty()
   end_time: number;
+
   @Expose()
   @ApiProperty()
   play_time: number;
+
   @Expose()
   @ApiProperty()
   start_time: number;
+
   @Expose()
   @ApiProperty()
   members: string[];
+
   @Expose()
   @Type(() => JobResult)
   @ApiProperty()
   job_result: JobResult;
+
   @Expose()
   @Type(() => Player)
   @ApiProperty()
   players: Player[];
+
   @Expose()
   @Type(() => Wave)
   @ApiProperty()
   waves: Wave[];
+
   @Expose()
   @Type(() => Schedule)
   @ApiProperty()

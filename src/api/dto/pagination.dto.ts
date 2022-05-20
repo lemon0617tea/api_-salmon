@@ -4,7 +4,7 @@
  * @date 2020-10-11
  */
 
-import { applyDecorators, Type } from '@nestjs/common';
+import { applyDecorators, ParseBoolPipe, Type } from '@nestjs/common';
 import {
   ApiOkResponse,
   ApiProperty,
@@ -12,7 +12,13 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 import { Expose, Transform } from 'class-transformer';
-import { IsInt } from 'class-validator';
+import {
+  IsBoolean,
+  IsBooleanString,
+  IsInt,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class PaginatedRequestDto {
   @Expose()
@@ -43,19 +49,33 @@ export class PaginatedRequestDtoForResult extends PaginatedRequestDto {
     default: false,
     description: 'クリアしたリザルトのみ',
   })
+  @Expose()
+  @Transform((params) => {
+    if (params.value === undefined) {
+      return undefined;
+    }
+    return params.value === 'true';
+  })
+  @IsOptional()
+  @IsBoolean()
   readonly is_clear?: boolean;
 
   @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
   readonly nsaid?: string;
 }
 
 export class PaginatedDto<T> {
   @ApiProperty({ type: 'integer', description: '総数' })
   total: number;
+
   @ApiProperty({ type: 'integer', description: '取得数' })
   limit: number;
+
   @ApiProperty({ type: 'integer', description: 'オフセット' })
   offset: number;
+
   results: T[];
 }
 

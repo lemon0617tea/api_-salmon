@@ -59,7 +59,27 @@ export class ResultsController {
     @Query(new ValidationPipe({ transform: true }))
     query: PaginatedRequestDtoForResult
   ): Promise<PaginatedDto<ResultDto>> {
-    return this.service.findMany(query);
+    console.log(query.is_clear, typeof query.is_clear);
+    const request: Prisma.ResultFindManyArgs = {
+      where: {
+        jobResult: {
+          isClear: {
+            equals: query.is_clear,
+          },
+        },
+        members: {
+          has: query.nsaid,
+        },
+      },
+      select: {
+        players: true,
+        waves: true,
+        jobResult: true,
+      },
+      skip: query.offset,
+      take: query.limit,
+    };
+    return this.service.findMany(request);
   }
 
   @Get('schedules/:schedule_id')
@@ -80,8 +100,22 @@ export class ResultsController {
   findManyByUser(
     @Param('nsaid') nsaid: string,
     @Query(new ValidationPipe({ transform: true })) query: PaginatedRequestDto
-  ): Promise<ResultModel[]> {
-    return;
+  ): Promise<PaginatedDto<ResultDto>> {
+    const request: Prisma.ResultFindManyArgs = {
+      where: {
+        members: {
+          has: nsaid,
+        },
+      },
+      include: {
+        players: true,
+        waves: true,
+        jobResult: true,
+      },
+      skip: query.offset,
+      take: query.limit,
+    };
+    return this.service.findMany(request);
   }
 
   @Post('')

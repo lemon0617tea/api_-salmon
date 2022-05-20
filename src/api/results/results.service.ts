@@ -60,21 +60,12 @@ export class ResultsService {
   }
 
   async findMany(
-    query: PaginatedRequestDtoForResult
+    request: Prisma.ResultFindManyArgs
   ): Promise<PaginatedDto<ResultDto>> {
-    console.log(query);
     const response = new PaginatedDto<ResultDto>();
-    const results = this.prisma.result.findMany({
-      take: query.limit,
-      skip: query.offset,
-      include: {
-        players: true,
-        waves: true,
-        jobResult: true,
-      },
-    });
-    response.limit = query.limit;
-    response.offset = query.offset;
+    const results = this.prisma.result.findMany(request);
+    response.limit = request.take;
+    response.offset = request.skip;
     response.results = (await results).map((result) =>
       plainToClass(ResultDto, snakecaseKeys(result), {
         excludeExtraneousValues: true,
